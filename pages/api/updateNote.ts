@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from "../../lib/prisma"
 
-const updateTodo = async (req: NextApiRequest, res: NextApiResponse) => {
+const updateNotes = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -24,4 +24,4 @@ const updateTodo = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default updateTodo;
+export default updateNotes;
