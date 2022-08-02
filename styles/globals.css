@@ -1,11 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
-html, body {
+html,
+body {
     height: 100vh;
 }
 
 .clickableDivs {
     cursor: pointer;
+}
+
+.check {
+ @apply    odd:bg-white even:bg-slate-50
 }
