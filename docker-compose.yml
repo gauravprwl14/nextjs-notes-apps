@@ -1,0 +1,31 @@
+version: "3.3"
+
+services:
+  o3:
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    environment:
+      MONGO_URL: mongodb://root:password@o3-mongo:27017/
+    env_file:
+      - .env
+    depends_on:
+      - o3-mongo
+  o3-mongo:
+    image: mongo
+    restart: always
+    logging:
+      driver: none
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - $HOME/o3-volume:/data/db
+    ports:
+      - "27017-27019:27017-27019"

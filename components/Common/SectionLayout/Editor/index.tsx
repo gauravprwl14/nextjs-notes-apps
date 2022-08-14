@@ -1,3 +1,5 @@
+// @ts-nocheck - may need to be at the start of file
+
 import React, { useCallback, useMemo } from 'react'
 import isHotkey from 'is-hotkey'
 import { Editable, withReact, useSlate, Slate } from 'slate-react'
@@ -7,6 +9,7 @@ import {
     createEditor,
     Descendant,
     Element as SlateElement,
+    BaseEditor,
 } from 'slate'
 import { withHistory } from 'slate-history'
 
@@ -34,8 +37,8 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
 const RichTextExample = () => {
-    const renderElement = useCallback(props => <Element {...props} />, [])
-    const renderLeaf = useCallback(props => <Leaf {...props} />, [])
+    const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
+    const renderLeaf = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
     const editor = useMemo(() => withHistory(withReact(createEditor())), [])
 
     return (
@@ -81,7 +84,7 @@ const RichTextExample = () => {
     )
 }
 
-const toggleBlock = (editor, format) => {
+const toggleBlock = (editor: BaseEditor, format: string) => {
     const isActive = isBlockActive(
         editor,
         format,
@@ -115,7 +118,7 @@ const toggleBlock = (editor, format) => {
     }
 }
 
-const toggleMark = (editor, format) => {
+const toggleMark = (editor: BaseEditor, format: string) => {
     const isActive = isMarkActive(editor, format)
 
     if (isActive) {
@@ -125,7 +128,7 @@ const toggleMark = (editor, format) => {
     }
 }
 
-const isBlockActive = (editor, format, blockType = 'type') => {
+const isBlockActive = (editor: BaseEditor, format: any, blockType = 'type') => {
     const { selection } = editor
     if (!selection) return false
 
@@ -142,7 +145,7 @@ const isBlockActive = (editor, format, blockType = 'type') => {
     return !!match
 }
 
-const isMarkActive = (editor, format) => {
+const isMarkActive = (editor: BaseEditor, format: string | number) => {
     const marks = Editor.marks(editor)
     return marks ? marks[format] === true : false
 }
@@ -224,7 +227,7 @@ const BlockButton = ({ format, icon }) => {
                 format,
                 TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
             )}
-            onMouseDown={event => {
+            onMouseDown={(event: { preventDefault: () => void }) => {
                 event.preventDefault()
                 toggleBlock(editor, format)
             }}
@@ -239,7 +242,7 @@ const MarkButton = ({ format, icon }) => {
     return (
         <Button
             active={isMarkActive(editor, format)}
-            onMouseDown={event => {
+            onMouseDown={(event: { preventDefault: () => void }) => {
                 event.preventDefault()
                 toggleMark(editor, format)
             }}

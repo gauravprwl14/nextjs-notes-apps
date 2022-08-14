@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from "../../lib/prisma"
+// import prisma from "../../lib/prisma"
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'GET') {
@@ -7,18 +7,19 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const noteList = await prisma.noteList.findMany({
-      orderBy: [
-        {
-          isDone: 'asc'
-        },
-        {
-          id: 'desc'
-        }
-      ]
-    });
+    // const noteList = await prisma.noteList.findMany({
+    //   orderBy: [
+    //     {
+    //       isDone: 'asc'
+    //     },
+    //     {
+    //       id: 'desc'
+    //     }
+    //   ]
+    // });
 
-    return res.status(200).json({ noteList })
+    // return res.status(200).json({ noteList })
+    return res.status(200)
   } catch (error) {
     res.status(400).json({ message: 'Something went wrong' });
   }

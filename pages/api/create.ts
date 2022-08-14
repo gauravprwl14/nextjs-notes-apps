@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import prisma from "../../lib/prisma"
+// import prisma from "../../lib/prisma"
 
 const create = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -9,11 +9,12 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { note } = req.body
 
-    const savednote = await prisma.noteList.create({
-      data: note
-    })
+    // const savednote = await prisma.noteList.create({
+    //   data: note
+    // })
 
-    res.status(200).json({ savednote })
+    // res.status(200).json({ savednote })
+    res.status(200)
   } catch (error) {
     res.status(400).json({ message: 'Something went wrong' });
   }
