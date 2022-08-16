@@ -1,4 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Run
+
+```
+docker-compose up
+```
+
+App should be available at http://localhost:3000
+
+# Run with build
+
+This is required if new package is added to node_modules
+
+```
+docker-compose up --build
+```
+
+# Connect to mongo using Compass
+
+Download [MongoDb Compass](https://www.mongodb.com/try/download/compass) and use below connection string:
+
+```
+mongodb://root:password@localhost:27017/
+```
+
+
+
+<!-- This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
@@ -32,3 +58,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+ -->
