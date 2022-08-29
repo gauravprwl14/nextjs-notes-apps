@@ -3,6 +3,7 @@ import { SavedNoteItem } from "../types/note";
 import Layout from '../components/Layout'
 import SectionLayout from '../components/Common/SectionLayout'
 
+console.log('%c process.env ', 'background: lime; color: black', { env: process.env });
 
 const Home: NextPage<{ initialNote: SavedNoteItem[] }> = ({ initialNote }) => {
   return (
