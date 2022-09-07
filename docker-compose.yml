@@ -12,7 +12,8 @@ services:
       - /usr/src/app/node_modules
       - /usr/src/app/.next
     environment:
-      MONGO_URL: mongodb://root:password@o3-mongo:27017/
+      MONGO_URL: mongodb://o3-mongo:27017/
+      MONGO_DB_NAME: notes
     env_file:
       - .env
     depends_on:
@@ -22,9 +23,9 @@ services:
     restart: always
     logging:
       driver: none
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - $HOME/o3-volume:/data/db
     ports:
