@@ -1,5 +1,5 @@
 {
-    "name": "next-ts-psql",
+    "name": "next-notes-app",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -9,10 +9,12 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@next-auth/mongodb-adapter": "^1.0.4",
         "@types/mongoose": "^5.11.97",
         "is-hotkey": "^0.2.0",
         "mongoose": "^6.5.2",
         "next": "12.2.0",
+        "next-auth": "^4.10.3",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-icons": "^4.4.0",
