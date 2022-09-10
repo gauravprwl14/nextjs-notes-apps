@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, Db } from "mongodb";
 
 
 const { MONGO_URL, MONGO_DB_NAME } = process.env
@@ -6,10 +6,9 @@ const { MONGO_URL, MONGO_DB_NAME } = process.env
 const url = (MONGO_URL!) || "";
 let dbName = MONGO_DB_NAME;
 
-// @ts-ignore
-let cachedClient = null;
-// @ts-ignore
-let cachedDb = null;
+
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
 if (!url) {
     throw new Error(
@@ -23,7 +22,7 @@ if (!dbName) {
     );
 }
 
-export async function connectToDatabase() {
+export default async function connectToDatabase() {
     // @ts-ignore
     if (cachedClient && cachedDb) {
         return { client: cachedClient, db: cachedDb };
