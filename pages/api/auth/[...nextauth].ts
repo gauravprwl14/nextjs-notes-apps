@@ -10,6 +10,14 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET as string;
 const googleProvider = GoogleProvider({
     clientId: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
+    // profile: (profile) => {
+    //     return {
+    //         ...profile,
+    //         personnel_note: {
+    //             note: 'dadjkfnadkjnakj'
+    //         }
+    //     }
+    // }
 });
 
 export const authOptions: NextAuthOptions = {
@@ -61,6 +69,12 @@ export default NextAuth({
                 token.uid = user.id;
             }
             return token;
+        },
+        redirect: async ({ url }) => {
+            if (url === '/') {
+                return Promise.resolve('/notes')
+            }
+            return Promise.resolve(url)
         },
     },
 
