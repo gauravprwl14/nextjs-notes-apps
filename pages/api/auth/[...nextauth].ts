@@ -55,8 +55,12 @@ export default NextAuth({
             console.log('%c session, token, user, userData ', 'background: lime; color: black', { session, user, token, userData });
 
 
+
+            session.user.id = userData.id as string;
+
+
             // @ts-ignore
-            session.user.id = userData.id;
+            // session.user.userData = userData;
 
             // token.id = userData.id;
 
@@ -65,14 +69,20 @@ export default NextAuth({
             return session;
         },
         jwt: async ({ user, token }) => {
+
+
             if (user) {
-                token.uid = user.id;
+                token.uid = user.id as string;
             }
-            return token;
+
+            return token
+
         },
-        redirect: async ({ url }) => {
-            if (url === '/') {
-                return Promise.resolve('/notes')
+        redirect: async ({ url, baseUrl }) => {
+            const isRootPath = url === (baseUrl + '/')
+
+            if (isRootPath) {
+                return Promise.resolve(`${baseUrl}/notes`)
             }
             return Promise.resolve(url)
         },
