@@ -1,6 +1,6 @@
 // @ts-nocheck - may need to be at the start of file
 
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import isHotkey from 'is-hotkey'
 import { Editable, withReact, useSlate, Slate } from 'slate-react'
 import {
@@ -18,10 +18,10 @@ import { FaBold, FaItalic, FaUnderline, FaCode, FaAlignCenter, FaAlignLeft, FaAl
 import { MdOutlineFormatListNumbered, } from 'react-icons/md';
 
 
+import { Button } from '../../../Button'
 
 
-
-import { Button, Icon, Toolbar } from './components/index'
+import { EditorButton, Icon, Toolbar } from './components/index'
 
 
 
@@ -36,22 +36,36 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RichTextExample = () => {
+const RichTextExample = ({ note, handleChange }) => {
     const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
     const renderLeaf = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
-    const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+    // const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+    const editorRef = useRef()
+    if (!editorRef.current) editorRef.current = withReact(createEditor())
+    const editor = editorRef.current
+    const handleStateChange = (newEditorState) => {
+        handleChange(newEditorState)
+    }
+    const onBlur = (event, editor, next) => {
+        console.log('%c event, editor, next of onBlur ', 'background: lime; color: black', {
+            event, editor, next
+        });
+        return true;
+    }
 
     return (
-        <Slate editor={editor} value={initialValue}>
-            <Toolbar>
-                <MarkButton format="bold" icon={<FaBold />} />
-                <MarkButton format="italic" icon={<FaItalic />} />
-                <MarkButton format="underline" icon={<FaUnderline />} />
-                <MarkButton format="code" icon={<FaCode />} />
-                <BlockButton format="left" icon={<FaAlignLeft />} />
-                <BlockButton format="center" icon={<FaAlignCenter />} />
-                <BlockButton format="right" icon={<FaAlignRight />} />
-                {/* <BlockButton format="heading-one" icon="looks_one" />
+        <Slate editor={editor} value={note} onChange={handleStateChange}>
+            <div className='flex flex-1'>
+                <div className='flex-1'>
+                    <Toolbar>
+                        <MarkButton format="bold" icon={<FaBold />} />
+                        <MarkButton format="italic" icon={<FaItalic />} />
+                        <MarkButton format="underline" icon={<FaUnderline />} />
+                        <MarkButton format="code" icon={<FaCode />} />
+                        <BlockButton format="left" icon={<FaAlignLeft />} />
+                        <BlockButton format="center" icon={<FaAlignCenter />} />
+                        <BlockButton format="right" icon={<FaAlignRight />} />
+                        {/* <BlockButton format="heading-one" icon="looks_one" />
                 <BlockButton format="heading-two" icon="looks_two" />
                 <BlockButton format="block-quote" icon="format_quote" />
                 <BlockButton format="numbered-list" icon="format_list_numbered" />
@@ -60,7 +74,10 @@ const RichTextExample = () => {
                 <BlockButton format="center" icon="format_align_center" />
                 <BlockButton format="right" icon="format_align_right" />
                 <BlockButton format="justify" icon="format_align_justify" /> */}
-            </Toolbar>
+                    </Toolbar>
+                </div>
+                <Button className="!flex-none justify-center align-middle"> Add </Button>
+            </div>
             <Editable
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
@@ -221,7 +238,7 @@ const Leaf = ({ attributes, children, leaf }) => {
 const BlockButton = ({ format, icon }) => {
     const editor = useSlate()
     return (
-        <Button
+        <EditorButton
             active={isBlockActive(
                 editor,
                 format,
@@ -233,14 +250,14 @@ const BlockButton = ({ format, icon }) => {
             }}
         >
             <Icon>{icon}</Icon>
-        </Button>
+        </EditorButton>
     )
 }
 
 const MarkButton = ({ format, icon }) => {
     const editor = useSlate()
     return (
-        <Button
+        <EditorButton
             active={isMarkActive(editor, format)}
             onMouseDown={(event: { preventDefault: () => void }) => {
                 event.preventDefault()
@@ -248,41 +265,41 @@ const MarkButton = ({ format, icon }) => {
             }}
         >
             <Icon>{icon}</Icon>
-        </Button>
+        </EditorButton>
     )
 }
 
-const initialValue: Descendant[] = [
-    {
-        type: 'paragraph',
-        children: [
-            { text: 'This is editable ' },
-            { text: 'rich', bold: true },
-            { text: ' text, ' },
-            { text: 'much', italic: true },
-            { text: ' better than a ' },
-            { text: '<textarea>', code: true },
-            { text: '!' },
-        ],
-    },
-    {
-        type: 'paragraph',
-        children: [
-            {
-                text:
-                    "Since it's rich text, you can do things like turn a selection of text ",
-            },
-            { text: 'bold', bold: true },
-            {
-                text:
-                    ', or add a semantically rendered block quote in the middle of the page, like this:',
-            },
-        ],
-    },
-    {
-        type: 'block-quote',
-        children: [{ text: 'A wise quote.' }],
-    },
-]
+// const initialValue: Descendant[] = [
+//     {
+//         type: 'paragraph',
+//         children: [
+//             { text: 'This is editable ' },
+//             { text: 'rich', bold: true },
+//             { text: ' text, ' },
+//             { text: 'much', italic: true },
+//             { text: ' better than a ' },
+//             { text: '<textarea>', code: true },
+//             { text: '!' },
+//         ],
+//     },
+//     {
+//         type: 'paragraph',
+//         children: [
+//             {
+//                 text:
+//                     "Since it's rich text, you can do things like turn a selection of text ",
+//             },
+//             { text: 'bold', bold: true },
+//             {
+//                 text:
+//                     ', or add a semantically rendered block quote in the middle of the page, like this:',
+//             },
+//         ],
+//     },
+//     {
+//         type: 'block-quote',
+//         children: [{ text: 'A wise quote.' }],
+//     },
+// ]
 
 export default RichTextExample
