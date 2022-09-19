@@ -2,6 +2,8 @@
 import mongoose from "mongoose";
 import { MongoClient, Db } from "mongodb";
 import CONFIG from '@/api-lib/config'
+import Logger from '@/api-lib/utils/logger'
+
 
 // const { MONGO_URL, MONGO_DB_NAME } = process.env
 
@@ -27,16 +29,17 @@ if (!dbName) {
 
 
 
-export const connectToMongoose = async () => {
+export const connectToMongoose: () => Promise<{ db: typeof mongoose }> = async () => {
     try {
         if (cachedDb) {
             return {
                 db: cachedDb
             }
         }
+        Logger.debug('connectToMongoose', { url })
         const db = await mongoose.connect(url);
         cachedDb = db;
-        console.log("Connected to mongodb.");
+        console.log("Connected to mongodb.", { db });
         return {
             db
         }
