@@ -12,7 +12,7 @@ services:
       - /usr/src/app/node_modules
       - /usr/src/app/.next
     environment:
-      MONGO_URL: mongodb://o3-mongo:27017/
+      MONGO_URL: mongodb://o3-mongo:27017
       MONGO_DB_NAME: notes
     env_file:
       - .env
