@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 // import prisma from "../../lib/prisma"
-import connectToDatabase from '@/api-lib/dbConnect';
+import connectToDatabase from '@/api-lib/mongo/dbConnect';
 
 
 const create = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -11,11 +11,20 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { note } = req.body
 
-    const dbInstance = await connectToDatabase()
-    console.log('%c dbInstance ', 'background: lime; color: black', { dbInstance });
-    // const savednote = await prisma.noteList.create({
-    //   data: note
-    // })
+    const { db } = await connectToDatabase()
+    try {
+      // const user = await db.collection('users')
+      res.status(200).json({
+        user: {
+          test: "test-user"
+        }
+      });
+    } catch (error) {
+      res.status(404).json(error);
+    }
+
+
+    console.log('%c dbInstance ', 'background: lime; color: black', { db });
 
     // res.status(200).json({ savednote })
     res.status(200)
