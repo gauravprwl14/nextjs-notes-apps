@@ -1,21 +1,35 @@
-import {
-  CreateNoteBodyParams,
-  DeleteNoteBodyParams,
-  UpdateNoteBodyParams,
-} from "../types/note";
+// import {
+//   CreateNoteBodyParams,
+//   DeleteNoteBodyParams,
+//   UpdateNoteBodyParams,
+// } from "../types/note";
+
+
+export enum HttpMethods {
+  POST = "POST",
+  GET = "GET",
+  PUT = "PUT",
+  DELETE = "DELETE",
+
+}
 
 export const fetcher = (
   url: string,
-  data: DeleteNoteBodyParams | UpdateNoteBodyParams | CreateNoteBodyParams
+  method: HttpMethods,
+  header: any,
+  data: undefined | any
 ) => {
-  fetch(window.location.origin + url, {
-    method: data ? "POST" : "GET",
+
+  return fetch(url, {
+    method: method || 'GET',
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...header
     },
     body: JSON.stringify(data),
   }).then((r) => {
+    console.log('%c r ', 'background: lime; color: black', { r });
     return r.json();
   });
 };
