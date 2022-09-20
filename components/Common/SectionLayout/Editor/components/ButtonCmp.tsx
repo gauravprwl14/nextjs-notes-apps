@@ -7,7 +7,7 @@ interface Props {
 
 
 
-export const Button = ({ children, ...props }: React.PropsWithChildren) => {
+export const EditorButton = ({ children, ...props }: React.PropsWithChildren) => {
     return (
         <div className="inline-block ml-4" {...props}>
             {children}
@@ -15,4 +15,4 @@ export const Button = ({ children, ...props }: React.PropsWithChildren) => {
     )
 }
 
-export default Button
+export default EditorButton
