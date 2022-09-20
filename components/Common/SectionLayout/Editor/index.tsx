@@ -36,7 +36,7 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RichTextExample = ({ note, handleChange }) => {
+const RichTextExample = ({ note, handleChange, handleAddNote }) => {
     const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
     const renderLeaf = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
     // const editor = useMemo(() => withHistory(withReact(createEditor())), [])
@@ -46,13 +46,6 @@ const RichTextExample = ({ note, handleChange }) => {
     const handleStateChange = (newEditorState) => {
         handleChange(newEditorState)
     }
-    const onBlur = (event, editor, next) => {
-        console.log('%c event, editor, next of onBlur ', 'background: lime; color: black', {
-            event, editor, next
-        });
-        return true;
-    }
-
     return (
         <Slate editor={editor} value={note} onChange={handleStateChange}>
             <div className='flex flex-1'>
@@ -76,7 +69,7 @@ const RichTextExample = ({ note, handleChange }) => {
                 <BlockButton format="justify" icon="format_align_justify" /> */}
                     </Toolbar>
                 </div>
-                <Button className="!flex-none justify-center align-middle"> Add </Button>
+                <Button layoutClass="!flex-none justify-center align-middle" onClick={handleAddNote}> Add </Button>
             </div>
             <Editable
                 renderElement={renderElement}
