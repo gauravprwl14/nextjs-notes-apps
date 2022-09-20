@@ -4,12 +4,28 @@ import Editor from './Editor'
 import NoteList from './NoteList'
 import MyNotes from './MyNotes'
 
+import { useNotesController } from '@/store/notes';
+
+
 interface Props {
 
 }
 
 
 const SectionLayout: FunctionComponent<Props> = ({ }) => {
+    const { setNotes, note, handleBtnClick } = useNotesController([])
+
+    const handleChange = (newState: any) => {
+        console.log('%c newState ', 'background: lime; color: black', { newState });
+        setNotes(newState)
+    }
+
+    const handleAddNotes = (e: React.FormEvent<MouseEvent>) => {
+        e.preventDefault()
+
+        handleBtnClick(note)
+    }
+
     return (
         <div className="flex flex-row w-full h-full">
 
@@ -19,7 +35,11 @@ const SectionLayout: FunctionComponent<Props> = ({ }) => {
             </div>
             <div className="flex-1 w-[50%] flex-wrap overflow-auto pt-3 px-7 relative">
                 <div className="w-full shadow-lg flex-wrap flex-1 border-4 px-6 rounded bg-white mb-5">
-                    <Editor />
+                    <Editor
+                        note={note}
+                        handleChange={handleChange}
+                        handleAddNote={handleAddNotes}
+                    />
                 </div>
 
                 <NoteList />
