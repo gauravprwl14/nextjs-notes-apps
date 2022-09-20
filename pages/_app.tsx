@@ -1,16 +1,36 @@
+import { useEffect, useState } from "react";
 import { getSession, SessionProvider } from 'next-auth/react'
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+  dehydrate,
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 
 import { AppProvider } from "../store/context";
 import { GetServerSidePropsContext } from 'next/types';
 
+
+interface MyAppProps extends AppProps {
+  pageProps: {
+    dehydratedState: ReturnType<typeof dehydrate>;
+  };
+}
+
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <SessionProvider session={session}>
-      <AppProvider notes={pageProps.pokemon}>
-        <Component {...pageProps} />
-      </AppProvider>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <AppProvider notes={pageProps.pokemon}>
+            <Component {...pageProps} />
+          </AppProvider>
+        </Hydrate>
+      </QueryClientProvider>
     </SessionProvider>
   )
 }
