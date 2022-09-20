@@ -22,6 +22,7 @@ const googleProvider = GoogleProvider({
 
 export const authOptions: NextAuthOptions = {
     providers: [googleProvider],
+
 };
 
 export default NextAuth({
@@ -57,7 +58,6 @@ export default NextAuth({
 
 
             session.user.id = userData.id as string;
-
 
             // @ts-ignore
             // session.user.userData = userData;
