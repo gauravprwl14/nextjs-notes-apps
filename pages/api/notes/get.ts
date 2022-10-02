@@ -1,20 +1,21 @@
-import { getToken, JWT } from 'next-auth/jwt';
+
 import type { NextApiRequest, NextApiResponse } from 'next'
-import connectToDatabase from '@/api-lib/mongo/dbConnect';
-import UserModel from '@/api-lib/model/Users'
 import NotesModel from '@/api-lib/model/Notes'
 import mongoose from 'mongoose';
 import { authInitializer } from '@/api-lib/utils/auth';
 import { responseHandler } from '@/api-lib/utils/response';
 import { z } from "zod";
 import Logger from '@/api-lib/utils/logger';
-// import mongoose from 'mongoose';
 
 const getNotesListValidator = z.object({
-    data: z.object({
-        cid: z.string(),
-    })
+
+    cid: z.string(),
 })
+
+// msg: {
+//      cid: '631c6d4b2e19c822dd05c8c2',
+//     userId: '633294e0f9099ce610bfd571'
+//     }
 
 
 export const getNotesList = async (userId: String, cid: String) => {
@@ -39,9 +40,7 @@ export const getNotesList = async (userId: String, cid: String) => {
             $project: {
                 cid: "$connections._id",
                 uid: "$uid",
-                notes: "$connections.meeting_notes",
-                createdAt: "$createdAt",
-                updatedAt: "$updatedAt",
+                notes: "$connections.meetingNotes",
             }
         }
 
@@ -67,7 +66,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
         const userId = token?.uid as string
 
         try {
-            getNotesListValidator.parse(req.body)
+            getNotesListValidator.parse(req.query)
         } catch (error) {
             const payload = {
                 message: error
@@ -76,12 +75,15 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
             return
         }
 
-        const { cid } = req.body?.data
+        const { cid } = req.query as z.infer<typeof getNotesListValidator>;
+        Logger.debug("get function note", { cid, userId })
 
 
-        const response = getNotesList(userId, cid,)
+        const response = await getNotesList(userId, cid)
 
-        responseHandler(res, response, 200)
+        Logger.debug("get function note => response saa s", { response: response[0] })
+
+        responseHandler(res, response[0], 200)
         return
 
 
