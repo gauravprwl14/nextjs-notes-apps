@@ -3,21 +3,21 @@ import { IResponsePayload } from '@/types/api'
 
 export const errorResponse = <T,>(payload: T, status: number) => {
     return {
-        data: {
-            ...payload,
+        // data: {
+        //     ...payload,
 
-        },
+        // },
+        data: payload ? { ...payload } : payload,
         status,
         isError: true
     }
 }
 
 export const successResponse = <T,>(payload: T, status: number) => {
-    return {
-        data: {
-            ...payload,
+    const data = payload
 
-        },
+    return {
+        data: payload ? { ...payload } : payload,
         status,
         isError: false
     }
