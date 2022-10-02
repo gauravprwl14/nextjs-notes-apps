@@ -1,6 +1,7 @@
 export interface INote {
     _id: number;
     note: Descendant[] | [];
+    plainText: string | null
     createdAt: any;
 }
 
