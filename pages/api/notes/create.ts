@@ -4,10 +4,7 @@ import { getToken } from 'next-auth/jwt';
 import { responseHandler } from '@/api-lib/utils/response';
 import NotesModel from '@/api-lib/model/Notes';
 import { z } from "zod";
-import {
-
-    Descendant,
-} from 'slate'
+import { Node, Element } from 'slate'
 import Logger from '@/api-lib/utils/logger';
 import mongoose from 'mongoose';
 
@@ -19,12 +16,19 @@ const addNotesValidator = z.object({
     })
 })
 
+const serializeNote = (nodesArr: Element[]) => {
+    return nodesArr.map((n: Element) => Node.string(n)).join('\n')
+}
+
+
+
 
 
 
 const create = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        const payload = { message: 'Method not allowed' }
+        return responseHandler(res, payload, 405)
     }
 
     try {
@@ -48,7 +52,7 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const { cid, note } = data
-
+        const plainText = serializeNote(note)
 
 
         try {
@@ -76,10 +80,10 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
                     connections: [{
                         name: "test-user",
                         uid: cid,
-                        meeting_notes: [
+                        meetingNotes: [
                             {
                                 note: note,
-                                plain_text: "random-string"
+                                plainText: plainText
                             }
                         ]
 
@@ -93,26 +97,44 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 //  add any notes
 
-                // const response = await NotesModel.findOneAndUpdate(
-                //     {
-                //         uid: userId
-                //     },
-                //     {
-                //         $push: {
-                //             "connections.$[cid].meeting_notes": {
-                //                 note: note,
-                //                 plain_text: "random-text"
-                //             }
-                //         }
-                //     },
-                //     {
-                //         "arrayFilters": [{
-                //             "cid.uid": cid
-                //         }],
-                //         new: true
+                const response = await NotesModel.findOneAndUpdate(
+                    {
+                        uid: userId
+                    },
+                    {
+                        $push: {
+                            "connections.$[cid].meetingNotes": {
+                                note: note,
+                                plainText: plainText
+                            }
+                        }
+                    },
+                    {
+                        "arrayFilters": [{
+                            "cid.uid": cid
+                        }],
 
-                //     }
-                // )
+                        new: true,
+                        fields: {
+                            connections: {
+                                $elemMatch: {
+                                    "uid": cid,
+                                },
+
+                            }
+                            // "connections": 1
+                        }
+
+                    }
+                )
+
+                const { _doc } = response
+
+                const connectionObject = _doc.connections[0]
+
+                const meetingNotes = connectionObject?.meetingNotes[connectionObject.meetingNotes.length - 1]?.toObject()
+
+
 
 
                 //  update any notes
@@ -123,8 +145,8 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
                 //     },
                 //     {
                 //         $set: {
-                //             "connections.$[cid].meeting_notes.$[mid].note": note,
-                //             "connections.$[cid].meeting_notes.$[mid].plain_text": "random-text",
+                //             "connections.$[cid].meetingNotes.$[mid].note": note,
+                //             "connections.$[cid].meetingNotes.$[mid].plainText": plainText,
                 //         }
                 //     },
                 //     {
@@ -139,43 +161,43 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
                 //     }
                 // )
 
+                // Get Notes List
+                // const response = await NotesModel.aggregate([
+                //     {
+                //         $match: {
+                //             $and: [
+                //                 {
+                //                     uid: new mongoose.Types.ObjectId(userId as string),
+                //                 },
+                //                 {
+                //                     "connections.uid": new mongoose.Types.ObjectId(cid as string)
+                //                 },
+                //             ]
 
-                const response = await NotesModel.aggregate([
-                    {
-                        $match: {
-                            $and: [
-                                {
-                                    uid: new mongoose.Types.ObjectId(userId as string),
-                                },
-                                {
-                                    "connections.uid": new mongoose.Types.ObjectId(cid as string)
-                                },
-                            ]
+                //         }
+                //     },
+                //     {
+                //         $unwind: "$connections"
+                //     },
+                //     {
+                //         $project: {
+                //             cid: "$connections._id",
+                //             uid: "$uid",
+                //             notes: "$connections.meetingNotes",
+                //             createdAt: "$createdAt",
+                //             updatedAt: "$updatedAt",
+                //         }
+                //     }
 
-                        }
-                    },
-                    {
-                        $unwind: "$connections"
-                    },
-                    {
-                        $project: {
-                            cid: "$connections._id",
-                            uid: "$uid",
-                            notes: "$connections.meeting_notes",
-                            createdAt: "$createdAt",
-                            updatedAt: "$updatedAt",
-                        }
-                    }
+                // ])
 
-                ])
-
-                Logger.debug('notes create', response)
-
-
+                Logger.debug('notes create', meetingNotes)
 
 
 
-                responseHandler(res, response, 200)
+
+
+                responseHandler(res, meetingNotes, 200)
                 return
 
             }
