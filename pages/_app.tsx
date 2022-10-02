@@ -27,6 +27,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
           <AppProvider notes={pageProps.pokemon}>
+            <ReactQueryDevtools initialIsOpen={false} />
             <Component {...pageProps} />
           </AppProvider>
         </Hydrate>
