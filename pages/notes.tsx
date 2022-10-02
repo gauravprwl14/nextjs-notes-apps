@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import Layout from '../components/Layout'
 import SectionLayout from '../components/Common/SectionLayout'
 import { fetcher, HttpMethods } from '../utils/fetcher'
+// import { INote } from "@/types/note";
 
 
 export { getServerSideProps } from "@/store/notes";
@@ -10,7 +11,7 @@ export { getServerSideProps } from "@/store/notes";
 
 console.log('%c process.env ', 'background: lime; color: black', { env: process.env });
 
-const Home: NextPage<{ initialNote: any[] }> = ({ initialNote }) => {
+const Home: NextPage<{}> = ({ }) => {
 
 
     // const getUsersDetails = async () => {

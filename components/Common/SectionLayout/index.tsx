@@ -5,23 +5,23 @@ import NoteList from './NoteList'
 import MyNotes from './MyNotes'
 
 import { useNotesController } from '@/store/notes';
+import { INote } from "@/types/note";
 
-
-interface Props {
+interface ISectionLayoutProps {
 
 }
 
 
-const SectionLayout: FunctionComponent<Props> = ({ }) => {
+const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
     const { setNotes, note, handleBtnClick } = useNotesController([])
 
     const handleChange = (newState: any) => {
-        console.log('%c newState ', 'background: lime; color: black', { newState });
         setNotes(newState)
     }
 
     const handleAddNotes = (e: React.FormEvent<MouseEvent>) => {
-        e.preventDefault()
+        // e.preventDefault()
+
 
         handleBtnClick(note)
     }
