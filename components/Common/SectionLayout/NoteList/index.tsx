@@ -1,10 +1,15 @@
+import { CONNECTION_ID } from "@/store/notes";
+import { INote } from "@/types/note";
+import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil } from 'react-icons/bi';
+import { getNotesListAPICall } from "services/note";
+import { Editable, withReact, useSlate, Slate, useReadOnly } from 'slate-react'
 
-interface Props {
+
+interface INoteListProps {
 
 }
-
 
 
 const SearchBar = () => {
@@ -25,7 +30,20 @@ const SearchBar = () => {
 
 
 
-const ProfileSection: FunctionComponent<Props> = ({ }) => {
+const NotesList: FunctionComponent<INoteListProps> = ({ }) => {
+
+    let { isLoading, data } = useQuery(['notes'], () =>
+        getNotesListAPICall(CONNECTION_ID)
+    );
+
+    let notes = data?.data?.notes
+
+    if (Object.keys(notes || {}).length <= 0) {
+        notes = []
+    }
+    console.log('%c notes asdasda', 'background: lime; color: black', { notes });
+
+
     return (
         <div className="flex mt-10 flex-col">
             <div className=" flex flex-row flex-1 mb-6">
@@ -37,8 +55,28 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
             <div>
                 <SearchBar />
             </div>
+            {
+                notes?.map((note: INote, index: number) => {
+                    return (
+                        <>
+                            {/* <Editable
+                                placeholder="Enter some rich text…"
+                                spellCheck
+                                autoFocus
+                                style={{
+                                    minHeight: 200
+                                }}
+                                readOnly
+                            /> */}
+                            <div key={index} className="w-full shadow-lg flex-wrap flex-1 border-2 px-2 py-2 my-1 rounded bg-white ">
+                                <p className="line-clamp-2"> {note.plainText} </p>
+                            </div>
+                        </>
+                    )
+                })
+            }
         </div>
     )
 }
 
-export default ProfileSection
+export default NotesList
