@@ -1,11 +1,14 @@
+import { Fragment } from 'react'
 import { CONNECTION_ID } from "@/store/notes";
 import { INote } from "@/types/note";
 import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
-import { BiPencil } from 'react-icons/bi';
+import { BiPencil, } from 'react-icons/bi';
+import { FaEllipsisH, FaTrash } from "react-icons/fa";
+
 import { getNotesListAPICall } from "services/note";
 import { Editable, withReact, useSlate, Slate, useReadOnly } from 'slate-react'
-
+import { Menu, Transition } from '@headlessui/react'
 
 interface INoteListProps {
 
@@ -25,6 +28,107 @@ const SearchBar = () => {
             </div>
         </form>
 
+    )
+}
+
+
+const links = [
+    { href: '/account-settings', label: 'Account settings' },
+    { href: '/support', label: 'Support' },
+    { href: '/license', label: 'License' },
+    { href: '/sign-out', label: 'Sign out' },
+]
+
+const OptionsMenu = () => {
+    return (
+        <div className="">
+            <Menu as="div" className="relative inline-block text-left w-full">
+                <div className='flex  justify-between align-middle'>
+                    <div className='text-silverChalice text-xs flex align-middle'> 13 June, 2022  11:00 AM </div>
+                    <div>
+                        <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-opacity-20 text-silverChalice px-4 py-2 text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                            <FaEllipsisH />
+                        </Menu.Button>
+                    </div>
+                </div>
+
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+                        <div className="px-1 py-1">
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <button
+                                        className={`${active ? 'bg-whiteSmoke text-gray-900' : 'text-gray-900'
+                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                    >
+                                        {active ? (
+                                            <BiPencil
+                                                className="mr-2 h-3 w-3"
+                                                aria-hidden="true"
+                                            />
+                                        ) : (
+                                            <BiPencil
+                                                className="mr-2 h-3 w-3"
+                                                aria-hidden="true"
+                                            />
+                                        )}
+                                        Edit
+                                    </button>
+                                )}
+                            </Menu.Item>
+                        </div>
+                        <div className="px-1 py-1">
+                            <Menu.Item>
+                                {({ active }) => (
+                                    <button
+                                        className={`${active ? 'bg-whiteSmoke text-gray-900' : 'text-gray-900'
+                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                    >
+                                        {active ? (
+                                            <FaTrash
+                                                className="mr-2 h-3 w-3"
+                                                aria-hidden="true"
+                                            />
+                                        ) : (
+                                            <FaTrash
+                                                className="mr-2 h-3 w-3"
+                                                aria-hidden="true"
+                                            />
+                                        )}
+
+                                        Delete
+                                    </button>
+                                )}
+                            </Menu.Item>
+                        </div>
+                    </Menu.Items>
+                </Transition>
+            </Menu>
+        </div>
+    )
+}
+
+
+const NoteCard = ({ note }: { note: INote }) => {
+    return (
+        <div key={note._id} className="w-full flex-wrap flex-1 border-b-2 px-2 py-2 my-1 rounded bg-white ">
+            <div>
+                <div className="">
+                    <OptionsMenu />
+                </div>
+
+
+                <p className="line-clamp-2"> {note.plainText} </p>
+            </div>
+        </div>
     )
 }
 
@@ -59,19 +163,9 @@ const NotesList: FunctionComponent<INoteListProps> = ({ }) => {
                 notes?.map((note: INote, index: number) => {
                     return (
                         <>
-                            {/* <Editable
-                                placeholder="Enter some rich text…"
-                                spellCheck
-                                autoFocus
-                                style={{
-                                    minHeight: 200
-                                }}
-                                readOnly
-                            /> */}
-                            <div key={index} className="w-full shadow-lg flex-wrap flex-1 border-2 px-2 py-2 my-1 rounded bg-white ">
-                                <p className="line-clamp-2"> {note.plainText} </p>
-                            </div>
+                            <NoteCard note={note} key={index} />
                         </>
+
                     )
                 })
             }
