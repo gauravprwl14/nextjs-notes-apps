@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Node, Element } from 'slate'
 import Logger from '@/api-lib/utils/logger';
 import mongoose from 'mongoose';
+import { generateResponseForPostNoteApi, serializeNote } from '@/api-lib/utils/helper';
 
 
 const addNotesValidator = z.object({
@@ -16,9 +17,7 @@ const addNotesValidator = z.object({
     })
 })
 
-const serializeNote = (nodesArr: Element[]) => {
-    return nodesArr.map((n: Element) => Node.string(n)).join('\n')
-}
+
 
 
 
@@ -128,12 +127,10 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
                     }
                 )
 
-                const { _doc } = response
 
-                const connectionObject = _doc.connections[0]
 
-                const meetingNotes = connectionObject?.meetingNotes[connectionObject.meetingNotes.length - 1]?.toObject()
 
+                const meetingNotes = generateResponseForPostNoteApi(response)
 
 
 
