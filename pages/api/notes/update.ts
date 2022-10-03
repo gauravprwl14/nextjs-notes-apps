@@ -6,6 +6,7 @@ import { authInitializer } from '@/api-lib/utils/auth';
 import { responseHandler } from '@/api-lib/utils/response';
 import { z } from "zod";
 import Logger from '@/api-lib/utils/logger';
+import { generateResponseForPostNoteApi, serializeNote } from '@/api-lib/utils/helper';
 import { getNotesList } from './get'
 
 
@@ -42,7 +43,9 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
             return
         }
 
-        const { cid, note, mid } = req.body?.data
+        const { cid, note, nodeId } = req.body?.data
+
+        const plainText = serializeNote(note)
 
 
         const notesRecord = await NotesModel.findOneAndUpdate(
@@ -52,21 +55,36 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
             {
                 $set: {
                     "connections.$[cid].meetingNotes.$[mid].note": note,
-                    "connections.$[cid].meetingNotes.$[mid].plainText": "random-text",
+                    "connections.$[cid].meetingNotes.$[mid].plainText": plainText
                 }
             },
             {
 
-                "fields": { "_id": 1, "connections": 1 },
+                // "fields": { "_id": 1, "connections": 1 },
                 "arrayFilters": [{
                     "cid.uid": cid,
 
-                }, {
-                    "mid._id": mid,
+                },
+                {
+                    "mid._id": nodeId,
                 }],
+
+                new: true,
+
+                fields: {
+                    connections: {
+                        $elemMatch: {
+                            "uid": cid,
+                        },
+
+                    }
+                }
             }
         )
-        responseHandler(res, notesRecord, 200)
+
+        const meetingNotes = generateResponseForPostNoteApi(notesRecord)
+
+        responseHandler(res, meetingNotes, 200)
         return
 
 
