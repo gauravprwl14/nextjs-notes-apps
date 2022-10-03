@@ -29,6 +29,7 @@ module.exports = {
                 whiteSmoke: "#F5F5F5",
                 terraCotta: "#EC7160",
                 carbonGrey: "#5E5E5E",
+                silverChalice: "#ACACAC",
 
                 "transparent": "#000000",
                 "black": "#000000",
