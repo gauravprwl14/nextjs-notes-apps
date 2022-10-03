@@ -3,3 +3,17 @@ export interface IResponsePayload<T> {
     isError: boolean,
     status: number
 }
+export interface IPostNoteApiCallPayload {
+    data: {
+        note: ISlateNote;
+        cid: String;
+    }
+}
+
+export interface IUpdateNoteApiCallPayload {
+    data: {
+        note: ISlateNote;
+        cid: String;
+        nodeId: number
+    }
+}

@@ -23,6 +23,11 @@ export interface INotes {
 
 
 
+export type ISlateNote = Descendant[] | [];
+
+
+
+
 
 
 
