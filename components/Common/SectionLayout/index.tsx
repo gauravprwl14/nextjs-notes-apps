@@ -35,7 +35,6 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
 
             <div className="flex-1 w-[25%] bg-whiteSmoke h-full pt-3 px-7">
                 <ProfileSection />
-                <Content />
             </div>
             <div className="flex-1 w-[50%] flex-wrap overflow-auto pt-3 px-7 relative">
                 <div className="w-full shadow-lg flex-wrap flex-1 border-4 px-6 rounded bg-white mb-5">
