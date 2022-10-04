@@ -114,6 +114,7 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
                         }],
 
                         new: true,
+                        runValidators: true,
                         fields: {
                             connections: {
                                 $elemMatch: {
