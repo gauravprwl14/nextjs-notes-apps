@@ -3,6 +3,7 @@ export interface INote {
     note: Descendant[] | [];
     plainText: string | null
     createdAt: any;
+    updatedAt: any;
 }
 
 export interface IConnection {

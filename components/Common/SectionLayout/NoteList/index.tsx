@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil, } from 'react-icons/bi';
 import { FaEllipsisH, FaTrash } from "react-icons/fa";
-
+import { compareAsc, format } from 'date-fns'
 import { getNotesListAPICall } from "services/note";
 import { Editable, withReact, useSlate, Slate, useReadOnly } from 'slate-react'
 import { Menu, Transition } from '@headlessui/react'
@@ -40,15 +40,16 @@ const links = [
     { href: '/sign-out', label: 'Sign out' },
 ]
 
-const OptionsMenu = ({ onEdit, onDelete }: {
+const OptionsMenu = ({ onEdit, onDelete, formattedDate }: {
     onEdit: (e: any) => void
     onDelete: (e: any) => void
+    formattedDate: String
 }) => {
     return (
         <div className="">
             <Menu as="div" className="relative inline-block text-left w-full">
                 <div className='flex  justify-between align-middle'>
-                    <div className='text-silverChalice text-xs flex align-middle'> 13 June, 2022  11:00 AM </div>
+                    <div className='text-silverChalice text-xs flex align-middle'> {formattedDate} </div>
                     <div>
                         <Menu.Button className="inline-flex w-full justify-center rounded-md  bg-opacity-20 text-silverChalice px-4 py-2 text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
                             <FaEllipsisH />
@@ -126,13 +127,16 @@ const NoteCard = ({ note, onEdit, onDelete }: {
     onEdit: (e: React.FormEvent<MouseEvent>, note: INote) => void
     onDelete: (e: React.FormEvent<MouseEvent>, note: INote) => void
 }) => {
+    let formattedDate = note.updatedAt ? format(new Date(note.updatedAt), 'do MMM, yyyy p') : "-"
     return (
         <div key={note._id} className="w-full flex-wrap flex-1 border-b-2 px-2 py-2 my-1 rounded bg-white ">
             <div>
                 <div className="">
+
                     <OptionsMenu
                         onEdit={(e: React.FormEvent<MouseEvent>) => onEdit(e, note)}
                         onDelete={(e: React.FormEvent<MouseEvent>) => onDelete(e, note)}
+                        formattedDate={formattedDate}
                     />
                 </div>
 
