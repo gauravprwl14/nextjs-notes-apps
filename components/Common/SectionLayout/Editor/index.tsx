@@ -26,6 +26,12 @@ import { EditorButton, Icon, Toolbar } from './components/index'
 
 
 
+interface IRichTextEditorProps {
+    btnText?: String
+    isEditModeEnable: boolean
+}
+
+
 const HOTKEYS = {
     'mod+b': 'bold',
     'mod+i': 'italic',
@@ -36,7 +42,7 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RichTextExample = ({ note, handleChange, handleAddNote }) => {
+const RichTextEditor = ({ note, handleChange, handleAddNote, btnText = 'Add', isEditModeEnable = true }) => {
     const [noteValue, setNoteValues] = useState(note)
     const editorRef = useRef()
     if (!editorRef.current) editorRef.current = withReact(createEditor())
@@ -72,29 +78,24 @@ const RichTextExample = ({ note, handleChange, handleAddNote }) => {
 
     return (
         <Slate editor={editor} value={noteValue} onChange={handleStateChange}>
-            <div className='flex flex-1'>
-                <div className='flex-1'>
-                    <Toolbar>
-                        <MarkButton format="bold" icon={<FaBold />} />
-                        <MarkButton format="italic" icon={<FaItalic />} />
-                        <MarkButton format="underline" icon={<FaUnderline />} />
-                        <MarkButton format="code" icon={<FaCode />} />
-                        <BlockButton format="left" icon={<FaAlignLeft />} />
-                        <BlockButton format="center" icon={<FaAlignCenter />} />
-                        <BlockButton format="right" icon={<FaAlignRight />} />
-                        {/* <BlockButton format="heading-one" icon="looks_one" />
-                <BlockButton format="heading-two" icon="looks_two" />
-                <BlockButton format="block-quote" icon="format_quote" />
-                <BlockButton format="numbered-list" icon="format_list_numbered" />
-                <BlockButton format="bulleted-list" icon="format_list_bulleted" />
-                <BlockButton format="left" icon="format_align_left" />
-                <BlockButton format="center" icon="format_align_center" />
-                <BlockButton format="right" icon="format_align_right" />
-                <BlockButton format="justify" icon="format_align_justify" /> */}
-                    </Toolbar>
+            {
+                isEditModeEnable && <div className='flex flex-1'>
+                    <div className='flex-1'>
+                        <Toolbar>
+                            <MarkButton format="bold" icon={<FaBold />} />
+                            <MarkButton format="italic" icon={<FaItalic />} />
+                            <MarkButton format="underline" icon={<FaUnderline />} />
+                            <MarkButton format="code" icon={<FaCode />} />
+                            <BlockButton format="left" icon={<FaAlignLeft />} />
+                            <BlockButton format="center" icon={<FaAlignCenter />} />
+                            <BlockButton format="right" icon={<FaAlignRight />} />
+
+                        </Toolbar>
+                    </div>
+                    <Button layoutClass="!flex-none justify-center align-middle" onClick={handleBtnClick}> {btnText} </Button>
                 </div>
-                <Button layoutClass="!flex-none justify-center align-middle" onClick={handleBtnClick}> Add </Button>
-            </div>
+            }
+
             <Editable
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
@@ -104,6 +105,7 @@ const RichTextExample = ({ note, handleChange, handleAddNote }) => {
                 style={{
                     minHeight: 200
                 }}
+                readOnly={!isEditModeEnable}
                 onKeyDown={event => {
                     for (const hotkey in HOTKEYS) {
                         if (isHotkey(hotkey, event as any)) {
@@ -321,4 +323,4 @@ const MarkButton = ({ format, icon }) => {
 //     },
 // ]
 
-export default RichTextExample
+export default RichTextEditor
