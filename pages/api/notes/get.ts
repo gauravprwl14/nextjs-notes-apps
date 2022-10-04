@@ -36,13 +36,43 @@ export const getNotesList = async (userId: String, cid: String) => {
         {
             $unwind: "$connections"
         },
+
         {
-            $project: {
-                cid: "$connections._id",
-                uid: "$uid",
-                notes: "$connections.meetingNotes",
+            $unwind: "$connections.meetingNotes"
+        },
+        {
+            $sort: {
+                "connections.meetingNotes.updatedAt": -1
             }
-        }
+        },
+        {
+            $group: {
+                _id: "$_id",
+
+
+                uid: { $first: '$uid' },
+                cid: { $first: '$connections._id' },
+                createdAt: { $first: '$createdAt' },
+                updatedAt: { $first: '$updatedAt' },
+                __v: { $first: '$__v' },
+
+
+
+                "notes": {
+                    "$push": "$connections.meetingNotes",
+                }
+
+            }
+        },
+
+        // {
+        //     $project: {
+        //         cid: "$connections._id",
+        //         uid: "$uid",
+        //         notes: "$connections.meetingNotes",
+
+        //     }
+        // }
 
     ])
 
