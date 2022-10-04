@@ -1,10 +1,10 @@
 import { GetServerSidePropsContext } from 'next/types';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getAPIContext, CONSTANTS } from 'utils/helper';
 import { fetcher, HttpMethods } from '../utils/fetcher'
 
-import { INote, INotes } from '@/types/note'
-import { getNotesListAPICall, postNoteAPICall } from 'services/note';
+import { INote, INotes, ISlateNote } from '@/types/note'
+import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall } from 'services/note';
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 
 
@@ -67,7 +67,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext): Pr
 }
 
 
-let initialNote = [
+export const cloneDeep = (obj: any) => {
+    return JSON.parse(JSON.stringify(obj))
+}
+
+
+let initialValue = [
     {
         type: 'paragraph',
         children: [
@@ -101,39 +106,146 @@ let initialNote = [
 ]
 
 
-// initialNote = []
 
-
-export const useNotesController = (notes: INotes[]) => {
-    const [note, setNotes] = useState(initialNote);
+const useUpdateNoteController = () => {
+    const [selectedNoteObj, setSelectedNodeObj] = useState<INote | null>(null);
 
     const queryClient = useQueryClient()
 
+
+
+    // Update Mutations
+    const updateNoteMutation = useMutation(updateNoteAPICall, {
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries(['notes'])
+            setSelectedNodeObj(null)
+        },
+        onError: (error) => {
+            // // Invalidate and refetch
+            // queryClient.invalidateQueries(['notes'])
+            setSelectedNodeObj(null)
+
+            console.log('%c handle error useUpdateNoteController ', 'background: salmon; color: black', { error });
+        },
+    })
+
+
+
+
+
+
+
+    return {
+        updateNoteMutation,
+        selectedNoteObj,
+        setSelectedNodeObj
+    }
+}
+
+const usePostNoteController = () => {
+    const queryClient = useQueryClient()
+
     // Mutations
-    const mutation = useMutation(postNoteAPICall, {
+    const postNoteMutation = useMutation(postNoteAPICall, {
         onSuccess: () => {
             // Invalidate and refetch
             queryClient.invalidateQueries(['notes'])
         },
     })
 
-    const handleBtnClick = async (payload: any) => {
+
+    return {
+        postNoteMutation
+    }
+}
+
+
+
+
+export const useNotesController = (notes: INotes[]) => {
+
+    const [note, setNotes] = useState(initialValue);
+
+
+    const {
+        updateNoteMutation,
+        selectedNoteObj,
+        setSelectedNodeObj
+    } = useUpdateNoteController();
+    const {
+        postNoteMutation,
+
+    } = usePostNoteController();
+
+
+    useEffect(() => {
+
+        return () => {
+            setNotes(cloneDeep(initialValue))
+            setSelectedNodeObj(null)
+        }
+    }, [setSelectedNodeObj])
+
+
+
+
+
+
+
+
+
+
+
+    // Handlers
+
+    const handleBtnClick = async (payload: ISlateNote) => {
         console.log('%c window.c ', 'background: lime; color: black', { payload });
 
         const headers = {
             credentials: 'include'
         }
         try {
-            const requestPayload = { data: { note: payload, cid: CONNECTION_ID } }
 
-            mutation.mutate(requestPayload)
+
+            if (selectedNoteObj) {
+                const requestPayload = { data: { note: payload, cid: CONNECTION_ID, nodeId: selectedNoteObj._id } }
+                updateNoteMutation.mutate(requestPayload)
+            } else {
+                const requestPayload = { data: { note: payload, cid: CONNECTION_ID } }
+                postNoteMutation.mutate(requestPayload)
+            }
+
+
             // const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/create`, HttpMethods.POST, headers, requestPayload)
             console.log('%c notes handleBtnClick', 'background: lime; color: black', { notes });
         } catch (error) {
-            console.log('%c error inside handleBtnClick notes ', 'background: salmon; color: black');
+            console.log('%c error inside handleBtnClick notes ', 'background: salmon; color: black', { error });
         }
 
     }
+
+
+    // Handlers
+
+    const handleNoteEdit = async (payload: { noteObj: INote }) => {
+        const { noteObj } = payload
+        console.log('%c selectedNoteObj payload ', 'background: lime; color: black', { payload, selectedNoteObj });
+        if (selectedNoteObj) {
+            // already one note is selected for edit
+            // todo show a confirmation modal before proceeding
+            // setSelectedNodeObj(noteObj)
+            // setNotes(noteObj.note)
+        } else {
+            setSelectedNodeObj(noteObj)
+            setNotes(noteObj.note)
+        }
+
+
+    }
+
+    console.log('%c note ===> ', 'background: lime; color: black', { note });
+
 
 
 
@@ -141,6 +253,7 @@ export const useNotesController = (notes: INotes[]) => {
     return {
         setNotes,
         note,
-        handleBtnClick
+        handleBtnClick,
+        handleNoteEdit
     };
 };
