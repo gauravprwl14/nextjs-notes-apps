@@ -25,3 +25,10 @@ export interface IUpdateConnectionNoteApiCallPayload {
         cid: String;
     }
 }
+
+
+export interface IUpdateUserNoteApiCallPayload {
+    data: {
+        note: ISlateNote;
+    }
+}
