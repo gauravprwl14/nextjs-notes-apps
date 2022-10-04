@@ -27,7 +27,7 @@ export const updateNoteAPICall = async (payload: IUpdateNoteApiCallPayload) => {
     const headers = {
         credentials: 'include'
     }
-    const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/update`, HttpMethods.POST, headers, payload)
+    const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/update`, HttpMethods.PUT, headers, payload)
     return notes
 }
 
