@@ -76,7 +76,7 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
                     </div>
                 </div>
 
-                <div>
+                <div className=' cursor-pointer'>
                     {
                         !isEditMode && <div onClick={() => {
                             setEditMode(true)
