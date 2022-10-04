@@ -12,15 +12,20 @@ const NoteSchema = new mongoose.Schema({
         required: false,
         default: null
     },
-    // createdAt: {
-    //     type: Date,
-    //     default: Date.now,
-    // },
-    // updatedAt: {
-    //     type: Date,
-    //     default: Date.now,
-    // }
-}, { timestamps: true })
+    createdAt: {
+        type: Date,
+        default: Date.now,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+    }
+},
+    {
+        // timestamps: { createdAt: 'createdDate', updatedAt: 'updatedDate' }
+        timestamps: true
+    }
+)
 
 
 const ConnectionSchema = new mongoose.Schema({
