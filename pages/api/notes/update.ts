@@ -13,7 +13,7 @@ import { getNotesList } from './get'
 const getNotesListValidator = z.object({
     data: z.object({
         cid: z.string(),
-        mid: z.string(),
+        nodeId: z.string(),
         note: z.any()
     })
 })
@@ -70,6 +70,7 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
                 }],
 
                 new: true,
+                runValidators: true,
 
                 fields: {
                     connections: {
