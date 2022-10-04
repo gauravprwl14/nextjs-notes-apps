@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { CONNECTION_ID } from "@/store/notes";
-import { INote } from "@/types/note";
+import { INote, INoteEditFnHandler } from "@/types/note";
 import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil, } from 'react-icons/bi';
@@ -11,7 +11,7 @@ import { Editable, withReact, useSlate, Slate, useReadOnly } from 'slate-react'
 import { Menu, Transition } from '@headlessui/react'
 
 interface INoteListProps {
-
+    onEditBtnClick: (payload: { noteObj: INote }) => void
 }
 
 
@@ -39,7 +39,7 @@ const links = [
     { href: '/sign-out', label: 'Sign out' },
 ]
 
-const OptionsMenu = () => {
+const OptionsMenu = ({ onEdit }: { onEdit: (e: any) => void }) => {
     return (
         <div className="">
             <Menu as="div" className="relative inline-block text-left w-full">
@@ -62,7 +62,7 @@ const OptionsMenu = () => {
                     leaveTo="transform opacity-0 scale-95"
                 >
                     <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-                        <div className="px-1 py-1">
+                        <div className="px-1 py-1" onClick={onEdit}>
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -117,12 +117,14 @@ const OptionsMenu = () => {
 }
 
 
-const NoteCard = ({ note }: { note: INote }) => {
+const NoteCard = ({ note, onEdit }: { note: INote, onEdit: (e: React.FormEvent<MouseEvent>, note: INote) => void }) => {
     return (
         <div key={note._id} className="w-full flex-wrap flex-1 border-b-2 px-2 py-2 my-1 rounded bg-white ">
             <div>
                 <div className="">
-                    <OptionsMenu />
+                    <OptionsMenu
+                        onEdit={(e: React.FormEvent<MouseEvent>) => onEdit(e, note)}
+                    />
                 </div>
 
 
@@ -134,7 +136,7 @@ const NoteCard = ({ note }: { note: INote }) => {
 
 
 
-const NotesList: FunctionComponent<INoteListProps> = ({ }) => {
+const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick }: { onEditBtnClick: (payload: { noteObj: INote }) => void; }) => {
 
     let { isLoading, data } = useQuery(['notes'], () =>
         getNotesListAPICall(CONNECTION_ID)
@@ -145,6 +147,15 @@ const NotesList: FunctionComponent<INoteListProps> = ({ }) => {
     if (Object.keys(notes || {}).length <= 0) {
         notes = []
     }
+
+    const handleEditBtnClick = (e: React.FormEvent<MouseEvent>, noteObj: INote) => {
+        e.preventDefault();
+        const payload = {
+            noteObj: noteObj
+        }
+        onEditBtnClick(payload)
+    }
+
     console.log('%c notes asdasda', 'background: lime; color: black', { notes });
 
 
@@ -163,7 +174,7 @@ const NotesList: FunctionComponent<INoteListProps> = ({ }) => {
                 notes?.map((note: INote, index: number) => {
                     return (
                         <>
-                            <NoteCard note={note} key={index} />
+                            <NoteCard note={note} key={index} onEdit={handleEditBtnClick} />
                         </>
 
                     )
