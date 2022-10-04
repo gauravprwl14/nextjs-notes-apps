@@ -25,6 +25,11 @@ export interface INotes {
 
 export type ISlateNote = Descendant[] | [];
 
+export interface INoteEditFnHandler {
+    note: INote;
+    event: React.FormEvent<MouseEvent>
+}
+
 
 
 
