@@ -13,17 +13,21 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, handleBtnClick } = useNotesController([])
+    const { setNotes, note, handleBtnClick, handleNoteEdit } = useNotesController([])
 
     const handleChange = (newState: any) => {
         setNotes(newState)
     }
 
-    const handleAddNotes = (e: React.FormEvent<MouseEvent>) => {
+    const handleAddNotes = (localNote: any) => {
         // e.preventDefault()
 
 
-        handleBtnClick(note)
+        handleBtnClick(localNote)
+    }
+    const handleEditBtnClick = (payload: { noteObj: INote }) => {
+
+        handleNoteEdit(payload)
     }
 
     return (
@@ -42,7 +46,9 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
                     />
                 </div>
 
-                <NoteList />
+                <NoteList
+                    onEditBtnClick={handleEditBtnClick}
+                />
             </div>
             <div className="flex-1 w-[25%] border-l-2 pl-6"> <MyNotes /></div>
 
