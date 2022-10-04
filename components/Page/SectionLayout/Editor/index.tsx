@@ -264,7 +264,7 @@ const BlockButton = ({ format, icon }) => {
                 editor,
                 format,
                 TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
-            )}
+            ).toString()}
             onMouseDown={(event: { preventDefault: () => void }) => {
                 event.preventDefault()
                 toggleBlock(editor, format)
@@ -279,7 +279,7 @@ const MarkButton = ({ format, icon }) => {
     const editor = useSlate()
     return (
         <EditorButton
-            active={isMarkActive(editor, format)}
+            active={isMarkActive(editor, format).toString()}
             onMouseDown={(event: { preventDefault: () => void }) => {
                 event.preventDefault()
                 toggleMark(editor, format)

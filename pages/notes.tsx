@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { NextPage } from "next";
 import Layout from '../components/Layout'
-import SectionLayout from '../components/Common/SectionLayout'
+import SectionLayout from '../components/Page/SectionLayout'
 import { fetcher, HttpMethods } from '../utils/fetcher'
 // import { INote } from "@/types/note";
 

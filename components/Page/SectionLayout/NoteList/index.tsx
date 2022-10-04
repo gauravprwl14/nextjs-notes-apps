@@ -191,9 +191,9 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
             {
                 notes?.map((note: INote, index: number) => {
                     return (
-                        <>
-                            <NoteCard note={note} key={index} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />
-                        </>
+
+                        <NoteCard note={note} key={`${index}_${note._id}`} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />
+
 
                     )
                 })
