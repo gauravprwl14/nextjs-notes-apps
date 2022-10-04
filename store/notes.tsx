@@ -6,7 +6,7 @@ import { fetcher, HttpMethods } from '../utils/fetcher'
 import { INote, INotes, ISlateNote } from '@/types/note'
 import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall } from 'services/note';
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { useUpdateConnectionNoteController } from 'store/connection'
 
 export const CONNECTION_ID = '631c6d4b2e19c822dd05c8c2'
 
@@ -71,39 +71,44 @@ export const cloneDeep = (obj: any) => {
     return JSON.parse(JSON.stringify(obj))
 }
 
+export const initialEditorValue: ISlateNote = [{
+    type: 'paragraph',
+    children: [{ text: '' }],
+}];
 
-let initialValue = [
-    {
-        type: 'paragraph',
-        children: [
-            { text: 'This is editable ' },
-            { text: 'rich', bold: true },
-            { text: ' text, ' },
-            { text: 'much', italic: true },
-            { text: ' better than a ' },
-            { text: '<textarea>', code: true },
-            { text: '!' },
-        ],
-    },
-    {
-        type: 'paragraph',
-        children: [
-            {
-                text:
-                    "Since it's rich text, you can do things like turn a selection of text ",
-            },
-            { text: 'bold', bold: true },
-            {
-                text:
-                    ', or add a semantically rendered block quote in the middle of the page, like this:',
-            },
-        ],
-    },
-    {
-        type: 'block-quote',
-        children: [{ text: 'A wise quote.' }],
-    },
-]
+
+// export let initialValue = [
+//     {
+//         type: 'paragraph',
+//         children: [
+//             { text: 'This is editable ' },
+//             { text: 'rich', bold: true },
+//             { text: ' text, ' },
+//             { text: 'much', italic: true },
+//             { text: ' better than a ' },
+//             { text: '<textarea>', code: true },
+//             { text: '!' },
+//         ],
+//     },
+//     {
+//         type: 'paragraph',
+//         children: [
+//             {
+//                 text:
+//                     "Since it's rich text, you can do things like turn a selection of text ",
+//             },
+//             { text: 'bold', bold: true },
+//             {
+//                 text:
+//                     ', or add a semantically rendered block quote in the middle of the page, like this:',
+//             },
+//         ],
+//     },
+//     {
+//         type: 'block-quote',
+//         children: [{ text: 'A wise quote.' }],
+//     },
+// ]
 
 
 
@@ -165,7 +170,7 @@ const usePostNoteController = () => {
 
 export const useNotesController = (notes: INotes[]) => {
 
-    const [note, setNotes] = useState(initialValue);
+    const [note, setNotes] = useState(initialEditorValue);
 
 
     const {
@@ -173,6 +178,8 @@ export const useNotesController = (notes: INotes[]) => {
         selectedNoteObj,
         setSelectedNodeObj
     } = useUpdateNoteController();
+
+
     const {
         postNoteMutation,
 
@@ -182,7 +189,7 @@ export const useNotesController = (notes: INotes[]) => {
     useEffect(() => {
 
         return () => {
-            setNotes(cloneDeep(initialValue))
+            setNotes(cloneDeep(initialEditorValue))
             setSelectedNodeObj(null)
         }
     }, [setSelectedNodeObj])
