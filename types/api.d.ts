@@ -17,3 +17,11 @@ export interface IUpdateNoteApiCallPayload {
         nodeId: number
     }
 }
+
+
+export interface IUpdateConnectionNoteApiCallPayload {
+    data: {
+        note: ISlateNote;
+        cid: String;
+    }
+}
