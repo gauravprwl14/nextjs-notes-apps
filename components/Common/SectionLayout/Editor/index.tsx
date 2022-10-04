@@ -1,6 +1,6 @@
 // @ts-nocheck - may need to be at the start of file
 
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import isHotkey from 'is-hotkey'
 import { Editable, withReact, useSlate, Slate } from 'slate-react'
 import {
@@ -37,17 +37,41 @@ const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
 const RichTextExample = ({ note, handleChange, handleAddNote }) => {
-    const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
-    const renderLeaf = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
-    // const editor = useMemo(() => withHistory(withReact(createEditor())), [])
+    const [noteValue, setNoteValues] = useState(note)
     const editorRef = useRef()
     if (!editorRef.current) editorRef.current = withReact(createEditor())
     const editor = editorRef.current
+
+    useEffect(() => {
+        setNoteValues(note)
+
+        editorRef.current.children = note
+
+        // return () => {
+        //     setNoteValues(null)
+        // }
+    }, [note])
+
+
+
+
+    const renderElement = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; element: any }) => <Element {...props} />, [])
+    const renderLeaf = useCallback((props: JSX.IntrinsicAttributes & { attributes: any; children: any; leaf: any }) => <Leaf {...props} />, [])
+
     const handleStateChange = (newEditorState) => {
-        handleChange(newEditorState)
+        setNoteValues(newEditorState)
     }
+
+    const handleBtnClick = (e: React.FormEvent<MouseEvent>) => {
+        handleAddNote(noteValue)
+    }
+
+
+
+    console.log('%c notes array inside the editor ', 'background: lime; color: black', { note });
+
     return (
-        <Slate editor={editor} value={note} onChange={handleStateChange}>
+        <Slate editor={editor} value={noteValue} onChange={handleStateChange}>
             <div className='flex flex-1'>
                 <div className='flex-1'>
                     <Toolbar>
@@ -69,7 +93,7 @@ const RichTextExample = ({ note, handleChange, handleAddNote }) => {
                 <BlockButton format="justify" icon="format_align_justify" /> */}
                     </Toolbar>
                 </div>
-                <Button layoutClass="!flex-none justify-center align-middle" onClick={handleAddNote}> Add </Button>
+                <Button layoutClass="!flex-none justify-center align-middle" onClick={handleBtnClick}> Add </Button>
             </div>
             <Editable
                 renderElement={renderElement}
@@ -156,6 +180,8 @@ const isBlockActive = (editor: BaseEditor, format: any, blockType = 'type') => {
 }
 
 const isMarkActive = (editor: BaseEditor, format: string | number) => {
+    console.log('%c Editor ', 'background: lime; color: black', { Editor });
+
     const marks = Editor.marks(editor)
     return marks ? marks[format] === true : false
 }
