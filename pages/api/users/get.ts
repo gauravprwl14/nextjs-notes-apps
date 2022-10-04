@@ -1,46 +1,67 @@
-import { getToken, JWT } from 'next-auth/jwt';
+
 import type { NextApiRequest, NextApiResponse } from 'next'
-import connectToDatabase from '@/api-lib/mongo/dbConnect';
-import UserModel from '@/api-lib/model/Users'
-// import mongoose from 'mongoose';
+import NotesModel from '@/api-lib/model/Notes'
+import mongoose from 'mongoose';
+import { authInitializer } from '@/api-lib/utils/auth';
+import { responseHandler } from '@/api-lib/utils/response';
+import { z } from "zod";
+import Logger from '@/api-lib/utils/logger';
+
+
+export const getUsersDetails = async (userId: String) => {
+    const response = await NotesModel.findOne({
+        uid: new mongoose.Types.ObjectId(userId as string),
+    }, "uid personnelNote _id createdAt updatedAT __v")
+
+
+    const transformedConnectionObj = response?.toObject()
+
+
+    const connectionObj = transformedConnectionObj
+    return connectionObj
+
+
+    // return response
+}
+
+
+
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-
-
     try {
-
-        await connectToDatabase()
-
-        try {
-            const token = await getToken({ req });
-            if (!token) {
-                res.status(404).json({ message: "Un-Authorized" });
-            }
-
-            const uid = token?.uid
-
-
-
-            // const user = await db.collection('users').find({
-            //     _id: uid
-            // })
-            const user1 = await UserModel.findOne({ _id: uid }).exec()
-            // const user = await db.collection('users').find({})
-            res.status(200).json({ uid, user1 });
-        } catch (error) {
-            console.log('%c  error', 'background: salmon; color: black', { error });
-            res.status(500).json(error);
+        const { db, token, error, isError } = await authInitializer(req, res);
+        if (isError) {
+            responseHandler(res, error?.payload || "", error?.status || 500)
         }
 
+        const userId = token?.uid as string
 
-        return res.status(200)
+
+
+
+        const response = await getUsersDetails(userId)
+
+        Logger.debug("get getUsersDetails => response saa s", { response: response[0] })
+
+        responseHandler(res, response, 200)
+        return
+
+
     } catch (error) {
-        res.status(400).json({ message: 'Something went wrong' });
+        Logger.error("get.getUsersDetails", error)
+        let message = "Something went wrong" + error
+        if (error instanceof Error) {
+            message = error.message
+        }
+
+        responseHandler(res, { message: message }, 500)
+        return
     }
+
 }
 
 export default get;
