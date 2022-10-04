@@ -18,6 +18,13 @@ export interface IUpdateNoteApiCallPayload {
     }
 }
 
+export interface IDeleteNoteApiCallPayload {
+    data: {
+        cid: String;
+        nodeId: number
+    }
+}
+
 
 export interface IUpdateConnectionNoteApiCallPayload {
     data: {

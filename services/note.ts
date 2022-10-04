@@ -1,4 +1,4 @@
-import { IPostNoteApiCallPayload, IUpdateNoteApiCallPayload } from '@/types/api';
+import { IPostNoteApiCallPayload, IUpdateNoteApiCallPayload, IDeleteNoteApiCallPayload } from '@/types/api';
 import { fetcher, HttpMethods } from 'utils/fetcher';
 import { CONSTANTS } from 'utils/helper';
 
@@ -28,6 +28,14 @@ export const updateNoteAPICall = async (payload: IUpdateNoteApiCallPayload) => {
         credentials: 'include'
     }
     const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/update`, HttpMethods.PUT, headers, payload)
+    return notes
+}
+
+export const deleteNoteAPICall = async (payload: IDeleteNoteApiCallPayload) => {
+    const headers = {
+        credentials: 'include'
+    }
+    const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/delete`, HttpMethods.DELETE, headers, payload)
     return notes
 }
 

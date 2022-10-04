@@ -13,7 +13,7 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, handleBtnClick, handleNoteEdit } = useNotesController([])
+    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete } = useNotesController([])
 
     const handleChange = (newState: any) => {
         setNotes(newState)
@@ -28,6 +28,10 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
     const handleEditBtnClick = (payload: { noteObj: INote }) => {
 
         handleNoteEdit(payload)
+    }
+    const handleDeleteBtnClick = (noteObj: INote) => {
+
+        handleNoteDelete(noteObj)
     }
 
     return (
@@ -47,6 +51,7 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
 
                 <NoteList
                     onEditBtnClick={handleEditBtnClick}
+                    onDeleteClick={handleDeleteBtnClick}
                 />
             </div>
             <div className="flex-1 w-[25%] border-l-2 pl-6"> <MyNotes /></div>

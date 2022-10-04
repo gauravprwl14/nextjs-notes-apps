@@ -4,7 +4,7 @@ import { getAPIContext, CONSTANTS } from 'utils/helper';
 import { fetcher, HttpMethods } from '../utils/fetcher'
 
 import { INote, INotes, ISlateNote } from '@/types/note'
-import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall } from 'services/note';
+import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall, deleteNoteAPICall } from 'services/note';
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUpdateConnectionNoteController } from 'store/connection'
 
@@ -136,6 +136,23 @@ const useUpdateNoteController = () => {
     })
 
 
+    // Delete Mutations
+    const deleteNoteMutation = useMutation(deleteNoteAPICall, {
+        onSuccess: () => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries(['notes'])
+            setSelectedNodeObj(null)
+        },
+        onError: (error) => {
+            // // Invalidate and refetch
+            // queryClient.invalidateQueries(['notes'])
+            setSelectedNodeObj(null)
+
+            console.log('%c handle error useUpdateNoteController ', 'background: salmon; color: black', { error });
+        },
+    })
+
+
 
 
 
@@ -144,7 +161,8 @@ const useUpdateNoteController = () => {
     return {
         updateNoteMutation,
         selectedNoteObj,
-        setSelectedNodeObj
+        setSelectedNodeObj,
+        deleteNoteMutation
     }
 }
 
@@ -175,6 +193,7 @@ export const useNotesController = (notes: INotes[]) => {
 
     const {
         updateNoteMutation,
+        deleteNoteMutation,
         selectedNoteObj,
         setSelectedNodeObj
     } = useUpdateNoteController();
@@ -251,7 +270,15 @@ export const useNotesController = (notes: INotes[]) => {
 
     }
 
-    console.log('%c note ===> ', 'background: lime; color: black', { note });
+    const handleNoteDelete = async (selectedNoteObj: INote) => {
+
+
+        const requestPayload = { data: { cid: CONNECTION_ID, nodeId: selectedNoteObj._id } }
+        deleteNoteMutation.mutate(requestPayload)
+
+
+    }
+
 
 
 
@@ -261,6 +288,7 @@ export const useNotesController = (notes: INotes[]) => {
         setNotes,
         note,
         handleBtnClick,
-        handleNoteEdit
+        handleNoteEdit,
+        handleNoteDelete
     };
 };

@@ -12,6 +12,7 @@ import { Menu, Transition } from '@headlessui/react'
 
 interface INoteListProps {
     onEditBtnClick: (payload: { noteObj: INote }) => void
+    onDeleteClick: (noteObj: INote) => void
 }
 
 
@@ -39,7 +40,10 @@ const links = [
     { href: '/sign-out', label: 'Sign out' },
 ]
 
-const OptionsMenu = ({ onEdit }: { onEdit: (e: any) => void }) => {
+const OptionsMenu = ({ onEdit, onDelete }: {
+    onEdit: (e: any) => void
+    onDelete: (e: any) => void
+}) => {
     return (
         <div className="">
             <Menu as="div" className="relative inline-block text-left w-full">
@@ -85,7 +89,7 @@ const OptionsMenu = ({ onEdit }: { onEdit: (e: any) => void }) => {
                                 )}
                             </Menu.Item>
                         </div>
-                        <div className="px-1 py-1">
+                        <div className="px-1 py-1" onClick={onDelete}>
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
@@ -117,13 +121,18 @@ const OptionsMenu = ({ onEdit }: { onEdit: (e: any) => void }) => {
 }
 
 
-const NoteCard = ({ note, onEdit }: { note: INote, onEdit: (e: React.FormEvent<MouseEvent>, note: INote) => void }) => {
+const NoteCard = ({ note, onEdit, onDelete }: {
+    note: INote,
+    onEdit: (e: React.FormEvent<MouseEvent>, note: INote) => void
+    onDelete: (e: React.FormEvent<MouseEvent>, note: INote) => void
+}) => {
     return (
         <div key={note._id} className="w-full flex-wrap flex-1 border-b-2 px-2 py-2 my-1 rounded bg-white ">
             <div>
                 <div className="">
                     <OptionsMenu
                         onEdit={(e: React.FormEvent<MouseEvent>) => onEdit(e, note)}
+                        onDelete={(e: React.FormEvent<MouseEvent>) => onDelete(e, note)}
                     />
                 </div>
 
@@ -136,7 +145,7 @@ const NoteCard = ({ note, onEdit }: { note: INote, onEdit: (e: React.FormEvent<M
 
 
 
-const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick }: { onEditBtnClick: (payload: { noteObj: INote }) => void; }) => {
+const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDeleteClick }) => {
 
     let { isLoading, data } = useQuery(['notes'], () =>
         getNotesListAPICall(CONNECTION_ID)
@@ -154,6 +163,11 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick }: { onEd
             noteObj: noteObj
         }
         onEditBtnClick(payload)
+    }
+    const handleDeleteBtnClick = (e: React.FormEvent<MouseEvent>, noteObj: INote) => {
+        e.preventDefault();
+
+        onDeleteClick(noteObj)
     }
 
     console.log('%c notes asdasda', 'background: lime; color: black', { notes });
@@ -174,7 +188,7 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick }: { onEd
                 notes?.map((note: INote, index: number) => {
                     return (
                         <>
-                            <NoteCard note={note} key={index} onEdit={handleEditBtnClick} />
+                            <NoteCard note={note} key={index} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />
                         </>
 
                     )
