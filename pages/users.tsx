@@ -13,6 +13,16 @@ const Users: NextPage<{}> = ({ }) => {
             <Layout>
                 {/* <NoteApp initialNote={initialNote} /> */}
                 User List
+
+                <table className="w-full my-8 border-separate table-spacing text-gray-600">
+                    <thead>
+                        <tr>
+                            <th className="rounded-l-xl">Profile Icon</th>
+                            <th className="rounded-l-xl">User Name</th>
+                            <th className="rounded-r-xl">Action</th>
+                        </tr>
+                    </thead>
+                </table>
             </Layout>
         </div>
     );

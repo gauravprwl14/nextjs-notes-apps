@@ -30,7 +30,7 @@ const SideBar: FunctionComponent<Props> = ({ }) => {
             <div className="flex-1 h-full justify-center align-middle">
                 <div className="flex flex-1 justify-center align-middle flex-col " >
 
-                    <Link href="/users">
+                    {/* <Link href="/users">
                         <SideBarButton>
                             <FaUserPlus size={20} className="w-full" />
                         </SideBarButton>
@@ -41,7 +41,7 @@ const SideBar: FunctionComponent<Props> = ({ }) => {
                         <SideBarButton>
                             <FaBookOpen size={20} className="w-full" />
                         </SideBarButton>
-                    </Link>
+                    </Link> */}
 
 
                     <SideBarButton btnClick={() => signOut()}>
