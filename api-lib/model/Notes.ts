@@ -33,6 +33,10 @@ const ConnectionSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    profileUrl: {
+        type: String,
+        default: ""
+    },
     uid: {
         type: mongoose.Types.ObjectId,
         auto: true
