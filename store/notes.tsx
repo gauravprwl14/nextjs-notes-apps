@@ -6,7 +6,7 @@ import { fetcher, HttpMethods } from '../utils/fetcher'
 import { IConnectionDetails, INote, INotes, ISlateNote } from '@/types/note'
 import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall, deleteNoteAPICall } from 'services/note';
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUpdateConnectionNoteController } from 'store/connection'
+import { useAddConnectionModal } from 'store/connection'
 
 export const CONNECTION_ID = '631c6d4b2e19c822dd05c8c2'
 
@@ -76,12 +76,7 @@ export const initialEditorValue: ISlateNote = [{
     children: [{ text: '' }],
 }];
 
-export const initialConnectionDetails: () => IConnectionDetails = () => {
-    return {
-        _id: null,
-        name: '',
-    }
-};
+
 
 
 
@@ -158,38 +153,7 @@ const usePostNoteController = () => {
 }
 
 
-const useAddConnectionModal = () => {
-    let [isOpen, setIsOpen] = useState(false)
 
-    const [connectionDetails, setConnectionDetails] = useState(initialConnectionDetails())
-
-    const closeModal = () => {
-        setIsOpen(false)
-        resetConnectionDetails()
-    }
-
-    const openModal = () => {
-        setIsOpen(true)
-    }
-
-
-    const updateConnectionDetails = (newConnectionDetails: IConnectionDetails) => {
-        setConnectionDetails(newConnectionDetails)
-    }
-
-    const resetConnectionDetails = () => {
-        setConnectionDetails(initialConnectionDetails())
-    }
-
-    return {
-        isOpen,
-        closeModal,
-        openModal,
-        connectionDetails,
-        updateConnectionDetails,
-        resetConnectionDetails
-    }
-}
 
 
 
