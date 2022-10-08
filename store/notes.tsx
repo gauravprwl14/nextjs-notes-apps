@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getAPIContext, CONSTANTS } from 'utils/helper';
 import { fetcher, HttpMethods } from '../utils/fetcher'
 
-import { INote, INotes, ISlateNote } from '@/types/note'
+import { IConnectionDetails, INote, INotes, ISlateNote } from '@/types/note'
 import { getNotesListAPICall, postNoteAPICall, updateNoteAPICall, deleteNoteAPICall } from 'services/note';
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUpdateConnectionNoteController } from 'store/connection'
@@ -76,39 +76,13 @@ export const initialEditorValue: ISlateNote = [{
     children: [{ text: '' }],
 }];
 
+export const initialConnectionDetails: () => IConnectionDetails = () => {
+    return {
+        _id: null,
+        name: '',
+    }
+};
 
-// export let initialValue = [
-//     {
-//         type: 'paragraph',
-//         children: [
-//             { text: 'This is editable ' },
-//             { text: 'rich', bold: true },
-//             { text: ' text, ' },
-//             { text: 'much', italic: true },
-//             { text: ' better than a ' },
-//             { text: '<textarea>', code: true },
-//             { text: '!' },
-//         ],
-//     },
-//     {
-//         type: 'paragraph',
-//         children: [
-//             {
-//                 text:
-//                     "Since it's rich text, you can do things like turn a selection of text ",
-//             },
-//             { text: 'bold', bold: true },
-//             {
-//                 text:
-//                     ', or add a semantically rendered block quote in the middle of the page, like this:',
-//             },
-//         ],
-//     },
-//     {
-//         type: 'block-quote',
-//         children: [{ text: 'A wise quote.' }],
-//     },
-// ]
 
 
 
@@ -184,9 +158,44 @@ const usePostNoteController = () => {
 }
 
 
+const useAddConnectionModal = () => {
+    let [isOpen, setIsOpen] = useState(false)
+
+    const [connectionDetails, setConnectionDetails] = useState(initialConnectionDetails())
+
+    const closeModal = () => {
+        setIsOpen(false)
+        resetConnectionDetails()
+    }
+
+    const openModal = () => {
+        setIsOpen(true)
+    }
 
 
-export const useNotesController = (notes: INotes[]) => {
+    const updateConnectionDetails = (newConnectionDetails: IConnectionDetails) => {
+        setConnectionDetails(newConnectionDetails)
+    }
+
+    const resetConnectionDetails = () => {
+        setConnectionDetails(initialConnectionDetails())
+    }
+
+    return {
+        isOpen,
+        closeModal,
+        openModal,
+        connectionDetails,
+        updateConnectionDetails,
+        resetConnectionDetails
+    }
+}
+
+
+
+
+
+export const useNotesController = (notes?: INotes[]) => {
 
     const [note, setNotes] = useState(initialEditorValue);
 
@@ -197,6 +206,9 @@ export const useNotesController = (notes: INotes[]) => {
         selectedNoteObj,
         setSelectedNodeObj
     } = useUpdateNoteController();
+
+
+    const modalState = useAddConnectionModal()
 
 
     const {
@@ -289,6 +301,8 @@ export const useNotesController = (notes: INotes[]) => {
         note,
         handleBtnClick,
         handleNoteEdit,
-        handleNoteDelete
+        handleNoteDelete,
+
+        ...modalState
     };
 };
