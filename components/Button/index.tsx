@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-export const Button = ({ children, onClick, layoutClass, btnClass }: IButtonProps) => {
+export const Button = ({ children, onClick, layoutClass = "", btnClass = "" }: IButtonProps) => {
     return (
         <div className={`flex cursor-pointer flex-row flex-1 mx-2 ${layoutClass}`} onClick={onClick}>
             <div className="w-full block mt-1">
@@ -13,8 +13,8 @@ export const Button = ({ children, onClick, layoutClass, btnClass }: IButtonProp
 
 interface IButtonProps {
     children: React.ReactNode;
-    layoutClass: String;
-    btnClass: String;
+    layoutClass?: String;
+    btnClass?: String;
     onClick: () => void
 }
 
