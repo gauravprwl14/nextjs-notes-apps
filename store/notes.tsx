@@ -172,7 +172,7 @@ export const useNotesController = (notes?: INotes[]) => {
     } = useUpdateNoteController();
 
 
-    const modalState = useAddConnectionModal()
+    const connectionState = useAddConnectionModal()
 
 
     const {
@@ -267,6 +267,6 @@ export const useNotesController = (notes?: INotes[]) => {
         handleNoteEdit,
         handleNoteDelete,
 
-        ...modalState
+        ...connectionState
     };
 };
