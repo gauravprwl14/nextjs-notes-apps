@@ -5,6 +5,7 @@ import SectionLayout from '../components/Page/SectionLayout'
 import { FaPlus } from 'react-icons/fa'
 import Modal from '../components/Modal'
 import Input from '../components/Input'
+import Loader from '@/components/Loader'
 import { useNotesController } from '@/store/notes'
 import Button from '@/components/Button'
 // import { INote } from "@/types/note";
@@ -27,7 +28,7 @@ const AddUserButton = ({ onBtnClick }: { onBtnClick: () => void }) => {
 }
 
 
-const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDetails }: any) => {
+const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDetails, isLoading, onAddNewConnectionClick }: any) => {
 
 
 
@@ -50,7 +51,15 @@ const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDe
 
             <div className="mt-4">
                 <div className="w-auto inline-block float-right">
-                    <Button layoutClass="" onClick={closeModal}> Add User </Button>
+                    <Button
+                        layoutClass=""
+                        btnClass="flex"
+                        onClick={onAddNewConnectionClick}
+                        enableLoader
+                        isLoading={isLoading}
+                    >
+                        Add User
+                    </Button>
                 </div>
 
 
@@ -67,7 +76,10 @@ const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDe
 }
 
 const Home: NextPage<{}> = ({ }) => {
-    const { closeModal, openModal, isOpen, updateConnectionDetails, resetConnectionDetails, connectionDetails } = useNotesController()
+    const { closeModal, openModal, isOpen, updateConnectionDetails, resetConnectionDetails, connectionDetails, addNewConnectionMutation, handleAddNewConnectionBtnClick } = useNotesController()
+
+
+    console.log('%c addNewConnectionMutation ', 'background: lime; color: black', { addNewConnectionMutation, status: addNewConnectionMutation.status });
 
     const handleAddBtnClick = () => {
         if (!isOpen) {
@@ -86,6 +98,10 @@ const Home: NextPage<{}> = ({ }) => {
         })
     }
 
+    const handleAddNewConnection = () => {
+        handleAddNewConnectionBtnClick(connectionDetails)
+    }
+
     return (
         <div className="w-screen h-max min-h-screen relative">
             <Layout>
@@ -101,6 +117,8 @@ const Home: NextPage<{}> = ({ }) => {
                     openModal={openModal}
                     title="Add User"
                     updateConnectionDetails={handleConnectionDetailsChange}
+                    isLoading={addNewConnectionMutation?.isLoading}
+                    onAddNewConnectionClick={handleAddNewConnection}
                 />
 
             </Layout>

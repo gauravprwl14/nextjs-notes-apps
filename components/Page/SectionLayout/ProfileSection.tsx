@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { CONNECTION_ID, useConnectionController } from "@/store/connection";
+import SelectSearch from '@/components/SelectSearch'
 import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil } from 'react-icons/bi';
@@ -77,6 +78,9 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
                     <ProfileIcon />
                     <div className=" ml-4 ">
                         <span className="text-terraCotta font-Inter font-bold text-lg"> John  Smith </span>
+                        <SelectSearch
+                            data={connectionList?.data?.connections}
+                        />
                     </div>
                 </div>
 
