@@ -26,6 +26,9 @@ export const addNewConnectionAPICall = async (payload: IAddNewConnectionApiCallP
     const headers = {
         credentials: 'include'
     }
-    const connectionObj = await fetcher(`${CONSTANTS.baseUrl}/api/connection/create`, HttpMethods.POST, headers, payload)
+    const apiPayload = {
+        data: payload.data
+    }
+    const connectionObj = await fetcher(`${CONSTANTS.baseUrl}/api/connection/create`, HttpMethods.POST, headers, apiPayload)
     return connectionObj
 }
