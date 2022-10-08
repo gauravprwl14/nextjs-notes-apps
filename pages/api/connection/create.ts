@@ -11,7 +11,11 @@ import { generateResponseForPostNoteApi, serializeNote } from '@/api-lib/utils/h
 
 const addConnectionValidator = z.object({
     data: z.object({
-        name: z.string(),
+        // name: z.string(),
+        connectionDetails: z.object({
+            name: z.string(),
+        })
+
     })
 })
 
@@ -47,8 +51,9 @@ const create = async (req: NextApiRequest, res: NextApiResponse) => {
             responseHandler(res, payload, 400)
             return
         }
+        const { connectionDetails } = data
 
-        const { name } = data
+        const { name } = connectionDetails
 
 
         try {
