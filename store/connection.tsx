@@ -5,6 +5,7 @@ import { fetcher, HttpMethods } from '../utils/fetcher'
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
 import { INote, INotes, ISlateNote, IConnectionDetails } from '@/types/note'
 import { updateConnectionNoteAPICall, addNewConnectionAPICall } from 'services/connection';
+import { IAddNewConnectionApiCallPayload } from '@/types/api';
 
 
 export const CONNECTION_ID = '631c6d4b2e19c822dd05c8c2'
@@ -43,12 +44,17 @@ export const useAddNewConnectionController = () => {
     const queryClient = useQueryClient()
     // Mutations
     const addNewConnectionMutation = useMutation(addNewConnectionAPICall, {
-        onSuccess: () => {
+        onSuccess: (data, payload: IAddNewConnectionApiCallPayload) => {
             // Invalidate and refetch
             // queryClient.invalidateQueries(['connectionDetails'])
+            payload?.onSuccessCb()
             queryClient.invalidateQueries(['connectionList'])
+
+
         },
     })
+
+
 
     return {
         addNewConnectionMutation
@@ -61,6 +67,7 @@ export const useAddConnectionModal = () => {
 
     const [connectionDetails, setConnectionDetails] = useState(initialConnectionDetails())
     const { addNewConnectionMutation } = useAddNewConnectionController()
+
 
     const closeModal = () => {
         setIsOpen(false)
@@ -84,8 +91,14 @@ export const useAddConnectionModal = () => {
         const payload = {
             data: {
                 connectionDetails: newConnectionDetails
+            },
+            onSuccessCb: () => {
+                closeModal()
+            },
+            onErrorCb: () => {
             }
         }
+
         addNewConnectionMutation.mutate(payload)
     }
 
@@ -96,7 +109,9 @@ export const useAddConnectionModal = () => {
         connectionDetails,
         updateConnectionDetails,
         resetConnectionDetails,
-        handleAddNewConnectionBtnClick
+        handleAddNewConnectionBtnClick,
+        addNewConnectionMutation
+
     }
 }
 
