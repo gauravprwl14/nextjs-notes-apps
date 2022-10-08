@@ -3,19 +3,22 @@ import type { NextPage } from "next";
 import Layout from '../components/Layout'
 import SectionLayout from '../components/Page/SectionLayout'
 import { FaPlus } from 'react-icons/fa'
-import { fetcher, HttpMethods } from '../utils/fetcher'
+import Modal from '../components/Modal'
+import Input from '../components/Input'
+import { useNotesController } from '@/store/notes'
+import Button from '@/components/Button'
 // import { INote } from "@/types/note";
 
 
 export { getServerSideProps } from "@/store/notes";
 
 
-console.log('%c process.env ', 'background: lime; color: black', { env: process.env });
 
-
-const AddUserButton = () => {
+const AddUserButton = ({ onBtnClick }: { onBtnClick: () => void }) => {
     return (
-        <div className="fixed bg-terraCotta rounded-full bottom-3 right-3 p-2 justify-center align-middle flex" >
+        <div className="fixed bg-terraCotta rounded-full bottom-3 right-3 p-2 justify-center align-middle flex"
+            onClick={onBtnClick}
+        >
             <button className="w-full p-2">
                 <FaPlus size={20} className="w-full" color="white" />
             </button>
@@ -23,23 +26,65 @@ const AddUserButton = () => {
     )
 }
 
+
+const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDetails }: any) => {
+
+
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            closeModal={closeModal}
+            openModal={openModal}
+            title={title}
+        >
+            <div className="mt-2">
+                <Input
+                    placeholder="Add Unique User.."
+                    label=""
+                    type="text"
+                    className="p-2"
+                    onChange={updateConnectionDetails}
+                />
+            </div>
+
+            <div className="mt-4">
+                <div className="w-auto inline-block float-right">
+                    <Button layoutClass="" onClick={closeModal}> Add User </Button>
+                </div>
+
+
+                {/* <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={closeModal}
+                >
+                    Add
+                </button> */}
+            </div>
+        </Modal>
+    )
+}
+
 const Home: NextPage<{}> = ({ }) => {
+    const { closeModal, openModal, isOpen, updateConnectionDetails, resetConnectionDetails, connectionDetails } = useNotesController()
 
+    const handleAddBtnClick = () => {
+        if (!isOpen) {
+            openModal()
+            resetConnectionDetails()
 
-    // const getUsersDetails = async () => {
-    //     try {
-    //         const response = await fetcher('/api/users/get', HttpMethods.GET, undefined)
-    //     } catch (error) {
+        }
+    }
 
-    //     }
-    // }
+    const handleConnectionDetailsChange = (e: React.FormEvent<HTMLInputElement>) => {
+        const { value } = e.currentTarget
 
-    // useEffect(() => {
-    //     getUsersDetails()
-
-    // }, [])
-
-
+        updateConnectionDetails({
+            _id: null,
+            name: value
+        })
+    }
 
     return (
         <div className="w-screen h-max min-h-screen relative">
@@ -47,7 +92,17 @@ const Home: NextPage<{}> = ({ }) => {
                 {/* <NoteApp initialNote={initialNote} /> */}
                 <SectionLayout />
 
-                <AddUserButton />
+                <AddUserButton
+                    onBtnClick={handleAddBtnClick}
+                />
+                <AddUserModal
+                    isOpen={isOpen}
+                    closeModal={closeModal}
+                    openModal={openModal}
+                    title="Add User"
+                    updateConnectionDetails={handleConnectionDetailsChange}
+                />
+
             </Layout>
         </div>
     );
