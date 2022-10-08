@@ -3,7 +3,7 @@ import { CONNECTION_ID, useConnectionController } from "@/store/connection";
 import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil } from 'react-icons/bi';
-import { getConnectionDetailsAPICall } from "services/connection";
+import { getConnectionDetailsAPICall, getConnectionListAPICall } from "services/connection";
 import Editor from './Editor'
 import { cloneDeep, initialEditorValue } from '@/store/notes';
 
@@ -51,6 +51,10 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
 
     let { isLoading, data } = useQuery(['connectionDetails'], () =>
         getConnectionDetailsAPICall(CONNECTION_ID)
+    );
+
+    let { isLoading: isConnectionListLoading, data: connectionList } = useQuery(['connectionList'], () =>
+        getConnectionListAPICall()
     );
 
     useEffect(() => {
