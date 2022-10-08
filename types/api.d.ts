@@ -41,7 +41,9 @@ export interface IUpdateConnectionNoteApiCallPayload {
 export interface IAddNewConnectionApiCallPayload {
     data: {
         connectionDetails: IConnectionDetails
-    }
+    },
+    onSuccessCb: () => void,
+    onErrorCb: () => void
 }
 
 
