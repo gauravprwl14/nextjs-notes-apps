@@ -13,6 +13,16 @@ export const getConnectionDetailsAPICall = async (cid: String) => {
     return response
 }
 
+export const getConnectionListAPICall = async () => {
+    const headers = {
+        credentials: 'include'
+    }
+    const response = await fetcher(`${CONSTANTS.baseUrl}/api/connection/getList`, HttpMethods.GET, headers, undefined)
+
+
+    return response
+}
+
 
 export const updateConnectionNoteAPICall = async (payload: IUpdateConnectionNoteApiCallPayload) => {
     const headers = {
