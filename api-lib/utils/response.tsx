@@ -7,7 +7,7 @@ export const errorResponse = <T,>(payload: T, status: number) => {
         //     ...payload,
 
         // },
-        data: payload ? { ...payload } : payload,
+        data: payload,
         status,
         isError: true
     }
@@ -17,7 +17,7 @@ export const successResponse = <T,>(payload: T, status: number) => {
     const data = payload
 
     return {
-        data: payload ? { ...payload } : payload,
+        data: payload,
         status,
         isError: false
     }
