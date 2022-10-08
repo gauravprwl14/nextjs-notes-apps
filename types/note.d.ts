@@ -33,6 +33,10 @@ export interface INoteEditFnHandler {
 
 
 
+export interface IConnectionDetails {
+    _id: String | null;
+    name: String
+}
 
 
 
