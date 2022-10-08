@@ -1,3 +1,6 @@
+import { IConnectionDetails } from '@/types/note'
+
+
 export interface IResponsePayload<T> {
     data: T;
     isError: boolean,
@@ -30,6 +33,14 @@ export interface IUpdateConnectionNoteApiCallPayload {
     data: {
         note: ISlateNote;
         cid: String;
+    }
+}
+
+
+
+export interface IAddNewConnectionApiCallPayload {
+    data: {
+        connectionDetails: IConnectionDetails
     }
 }
 
