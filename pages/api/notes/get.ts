@@ -42,17 +42,16 @@ export const getNotesList = async (userId: String, cid: String) => {
                 "connections._id": new mongoose.Types.ObjectId(cid as string)
             }
         },
-        // {
-        //     $sort: {
-        //         "connections.meetingNotes.updatedAt": -1
-        //     }
-        // },
 
         {
             $project: {
                 notes: "$connections.meetingNotes",
-                _id: 0
 
+            }
+        },
+        {
+            $unwind: {
+                path: "$notes",
             }
         },
         {
@@ -60,6 +59,14 @@ export const getNotesList = async (userId: String, cid: String) => {
                 "notes.updatedAt": -1
             }
         },
+        {
+            $group: {
+                _id: "$_id",
+                notes: {
+                    $push: "$notes"
+                }
+            }
+        }
         // {
         //     $unwind: "$meetingNotes"
         // },
@@ -117,7 +124,7 @@ export const getNotesList = async (userId: String, cid: String) => {
     ])
 
 
-    return response?.[0]
+    return response[0]
 
 }
 

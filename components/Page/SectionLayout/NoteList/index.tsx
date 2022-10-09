@@ -165,9 +165,9 @@ const useGetNotes = (searchQuery: string, cObj: any) => {
                     filteredNotes = []
                 }
 
-                return filteredNotes.filter((note) => {
+                return filteredNotes.filter((note: INote) => {
                     if (searchQuery) {
-                        return note.plainText.includes(searchQuery)
+                        return note.plainText?.trim()?.includes(searchQuery?.trim())
                     }
                     return true
 
