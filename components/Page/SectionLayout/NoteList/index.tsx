@@ -199,7 +199,7 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
 
 
     return (
-        <div className="flex mt-10 flex-col">
+        <div className="flex mt-10 flex-col max-h-[600px] overflow-auto">
             <div className=" flex flex-row flex-1 mb-6">
                 <div className=" ml-4 ">
                     <span className="text-terraCotta font-Inter font-normal text-lg"> All Notes </span>
