@@ -92,12 +92,13 @@ const useUpdateNoteController = () => {
     const updateNoteMutation = useMutation(updateNoteAPICall, {
         onSuccess: () => {
             // Invalidate and refetch
+            // TODO pass the connection id
             queryClient.invalidateQueries(['notes'])
             setSelectedNodeObj(null)
         },
         onError: (error) => {
             // // Invalidate and refetch
-            // queryClient.invalidateQueries(['notes'])
+            // TODO handle the error and show the notification
             setSelectedNodeObj(null)
 
             console.log('%c handle error useUpdateNoteController ', 'background: salmon; color: black', { error });
@@ -109,6 +110,7 @@ const useUpdateNoteController = () => {
     const deleteNoteMutation = useMutation(deleteNoteAPICall, {
         onSuccess: () => {
             // Invalidate and refetch
+            // TODO pass the connection id
             queryClient.invalidateQueries(['notes'])
             setSelectedNodeObj(null)
         },
@@ -142,6 +144,7 @@ const usePostNoteController = () => {
     const postNoteMutation = useMutation(postNoteAPICall, {
         onSuccess: () => {
             // Invalidate and refetch
+            // TODO pass the connection id
             queryClient.invalidateQueries(['notes'])
         },
     })
@@ -201,7 +204,7 @@ export const useNotesController = (notes?: INotes[]) => {
 
     // Handlers
 
-    const handleBtnClick = async (payload: ISlateNote) => {
+    const handleBtnClick = async (payload: ISlateNote, cid: string) => {
         console.log('%c window.c ', 'background: lime; color: black', { payload });
 
         const headers = {
@@ -211,10 +214,10 @@ export const useNotesController = (notes?: INotes[]) => {
 
 
             if (selectedNoteObj) {
-                const requestPayload = { data: { note: payload, cid: CONNECTION_ID, nodeId: selectedNoteObj._id } }
+                const requestPayload = { data: { note: payload, cid, nodeId: selectedNoteObj._id } }
                 updateNoteMutation.mutate(requestPayload)
             } else {
-                const requestPayload = { data: { note: payload, cid: CONNECTION_ID } }
+                const requestPayload = { data: { note: payload, cid } }
                 postNoteMutation.mutate(requestPayload)
             }
 
