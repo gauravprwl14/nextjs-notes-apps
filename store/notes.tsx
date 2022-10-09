@@ -169,6 +169,7 @@ const usePostNoteController = () => {
 export const useNotesController = (notes?: INotes[]) => {
 
     const [note, setNotes] = useState(initialEditorValue());
+    const [notesSearchQuery, setNotesSearchQuery] = useState('')
 
 
     const {
@@ -279,6 +280,8 @@ export const useNotesController = (notes?: INotes[]) => {
         handleNoteEdit,
         handleNoteDelete,
         resetSelectedNotesObject,
+        notesSearchQuery,
+        setNotesSearchQuery,
 
         ...connectionState
     };

@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Dispatch, Fragment, SetStateAction } from 'react'
 import { CONNECTION_ID } from "@/store/notes";
 import { IConnectionDetails, INote, INoteEditFnHandler } from "@/types/note";
 import { useQuery } from "@tanstack/react-query";
@@ -9,15 +9,25 @@ import { compareAsc, format } from 'date-fns'
 import { getNotesListAPICall } from "services/note";
 import { Editable, withReact, useSlate, Slate, useReadOnly } from 'slate-react'
 import { Menu, Transition } from '@headlessui/react'
+import { string } from 'zod';
+
 
 interface INoteListProps {
     onEditBtnClick: (payload: { noteObj: INote }) => void
     onDeleteClick: (noteObj: INote) => void
     cObj: IConnectionDetails | null
+    searchQry: string
+    setSearchQry: Dispatch<SetStateAction<string>>
 }
 
 
-const SearchBar = () => {
+const SearchBar = ({ query, setQuery }: { query: string; setQuery: (arg: any) => void }) => {
+
+    const handleChangeQuery = (e: React.FormEvent<HTMLInputElement>) => {
+        const { value } = e.currentTarget
+        setQuery(value)
+    }
+
     return (
         <form>
             <label className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
@@ -25,7 +35,7 @@ const SearchBar = () => {
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <svg aria-hidden="true" className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="search" id="default-search" className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required />
+                <input value={query} onChange={handleChangeQuery} type="search" id="default-search" className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" required />
                 <button type="submit" className="text-white absolute right-2.5 bottom-2.5 bg-terraCotta hover:bg-terraCotta focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-terraCotta dark:hover:bg-terraCotta dark:focus:ring-blue-800">Search</button>
             </div>
         </form>
@@ -33,13 +43,6 @@ const SearchBar = () => {
     )
 }
 
-
-const links = [
-    { href: '/account-settings', label: 'Account settings' },
-    { href: '/support', label: 'Support' },
-    { href: '/license', label: 'License' },
-    { href: '/sign-out', label: 'Sign out' },
-]
 
 const OptionsMenu = ({ onEdit, onDelete, formattedDate }: {
     onEdit: (e: any) => void
@@ -149,22 +152,36 @@ const NoteCard = ({ note, onEdit, onDelete }: {
 }
 
 
-
-const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDeleteClick, cObj }) => {
-
-    let { isLoading, data } = useQuery(['notes', cObj?._id], () => {
+const useGetNotes = (searchQuery: string, cObj: any) => {
+    return useQuery(['notes', cObj?._id,], () => {
         return getNotesListAPICall(cObj?._id || '')
     },
         {
-            enabled: cObj?._id ? true : false
+            enabled: cObj?._id ? true : false,
+            select: (response) => {
+                let filteredNotes: INote[] | [] = response?.data?.notes
+
+                if (Object.keys(filteredNotes || {}).length <= 0) {
+                    filteredNotes = []
+                }
+
+                return filteredNotes.filter((note) => {
+                    if (searchQuery) {
+                        return note.plainText.includes(searchQuery)
+                    }
+                    return true
+
+                })
+
+            }
         }
     );
+}
 
-    let notes = data?.data?.notes
 
-    if (Object.keys(notes || {}).length <= 0) {
-        notes = []
-    }
+const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDeleteClick, cObj, searchQry, setSearchQry }) => {
+
+    const { isLoading, data: filteredNotes } = useGetNotes(searchQry, cObj)
 
     const handleEditBtnClick = (e: React.FormEvent<MouseEvent>, noteObj: INote) => {
         e.preventDefault();
@@ -190,11 +207,14 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
             </div>
 
             <div>
-                <SearchBar />
+                <SearchBar
+                    query={searchQry}
+                    setQuery={setSearchQry}
+                />
             </div>
 
             {
-                notes && notes.length === 0 ?
+                filteredNotes && filteredNotes.length === 0 ?
 
 
                     <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -203,7 +223,7 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
 
                     :
 
-                    notes?.map((note: INote, index: number) => {
+                    filteredNotes?.map((note: INote, index: number) => {
                         return (
 
                             <NoteCard note={note} key={`${index}_${note._id}`} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />

@@ -14,7 +14,7 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject } = useNotesController([])
+    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject, notesSearchQuery, setNotesSearchQuery } = useNotesController([])
 
     const {
         selectConnection,
@@ -55,6 +55,7 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
         }
     }
 
+
     return (
         <div className="flex flex-row w-full h-full">
 
@@ -79,6 +80,8 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
                     onEditBtnClick={handleEditBtnClick}
                     onDeleteClick={handleDeleteBtnClick}
                     cObj={selectConnection}
+                    searchQry={notesSearchQuery}
+                    setSearchQry={setNotesSearchQuery}
                 />
             </div>
             <div className="w-[25%] border-l-2 pl-6"> <MyNotes /></div>
