@@ -28,6 +28,7 @@ export const getConnectionDetails = async (userId: String, cid: String) => {
 
             }
         },
+
         {
 
             $project: {
