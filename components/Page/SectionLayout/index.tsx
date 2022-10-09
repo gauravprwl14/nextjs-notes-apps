@@ -14,13 +14,13 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject, notesSearchQuery, setNotesSearchQuery } = useNotesController([])
+    const { setNotes, note, selectedNoteObj, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject, notesSearchQuery, setNotesSearchQuery } = useNotesController([])
 
     const {
         selectConnection,
         setSelectedConnection,
         connectionList,
-        isConnectionListLoading
+        isConnectionListLoading,
     } = useSelectConnectionController()
 
     const handleConnectionChange = (newConnectionObj: IConnectionDetails | null) => {
@@ -73,6 +73,7 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
                         note={note}
                         handleChange={handleChange}
                         handleAddNote={handleAddNotes}
+                        btnText={selectedNoteObj?._id ? "Update" : "Add"}
                     />
                 </div>
 

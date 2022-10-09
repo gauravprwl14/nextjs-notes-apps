@@ -105,7 +105,6 @@ const useUpdateNoteController = () => {
             // TODO handle the error and show the notification
             setSelectedNodeObj(null)
 
-            console.log('%c handle error useUpdateNoteController ', 'background: salmon; color: black', { error });
         },
     })
 
@@ -215,7 +214,6 @@ export const useNotesController = (notes?: INotes[]) => {
     // Handlers
 
     const handleBtnClick = async (payload: ISlateNote, cid: string) => {
-        console.log('%c window.c ', 'background: lime; color: black', { payload });
 
         const headers = {
             credentials: 'include'
@@ -226,10 +224,12 @@ export const useNotesController = (notes?: INotes[]) => {
             if (selectedNoteObj) {
                 const requestPayload = { data: { note: payload, cid, nodeId: selectedNoteObj._id } }
                 updateNoteMutation.mutate(requestPayload)
+                resetSelectedNotesObject()
             } else {
                 const requestPayload = { data: { note: payload, cid } }
                 postNoteMutation.mutate(requestPayload)
             }
+
 
 
             // const notes = await fetcher(`${CONSTANTS.baseUrl}/api/notes/create`, HttpMethods.POST, headers, requestPayload)
@@ -276,6 +276,7 @@ export const useNotesController = (notes?: INotes[]) => {
     return {
         setNotes,
         note,
+        selectedNoteObj,
         handleBtnClick,
         handleNoteEdit,
         handleNoteDelete,
