@@ -42,7 +42,7 @@ const HOTKEYS = {
 const LIST_TYPES = ['numbered-list', 'bulleted-list']
 const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
 
-const RichTextEditor = ({ note, handleChange, handleAddNote, btnText = 'Add', isEditModeEnable = true }) => {
+const RichTextEditor = ({ note, handleChange, handleAddNote, isLoading = false, btnText = 'Add', isEditModeEnable = true }) => {
     const [noteValue, setNoteValues] = useState(note)
     const editorRef = useRef()
     if (!editorRef.current) editorRef.current = withReact(createEditor())
@@ -89,7 +89,7 @@ const RichTextEditor = ({ note, handleChange, handleAddNote, btnText = 'Add', is
 
                         </Toolbar>
                     </div>
-                    <Button layoutClass="!flex-none justify-center align-middle" onClick={handleBtnClick}> {btnText} </Button>
+                    <Button layoutClass="!flex-none justify-center align-middle" onClick={handleBtnClick} enableLoader isLoading={isLoading}> {btnText} </Button>
                 </div>
             }
 

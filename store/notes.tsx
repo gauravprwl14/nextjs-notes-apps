@@ -283,6 +283,8 @@ export const useNotesController = (notes?: INotes[]) => {
         resetSelectedNotesObject,
         notesSearchQuery,
         setNotesSearchQuery,
+        updateNoteMutation,
+        postNoteMutation,
 
         ...connectionState
     };

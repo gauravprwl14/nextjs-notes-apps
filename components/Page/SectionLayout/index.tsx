@@ -14,7 +14,7 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, selectedNoteObj, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject, notesSearchQuery, setNotesSearchQuery } = useNotesController([])
+    const { setNotes, note, selectedNoteObj, postNoteMutation, updateNoteMutation, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject, notesSearchQuery, setNotesSearchQuery } = useNotesController([])
 
     const {
         selectConnection,
@@ -74,6 +74,7 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
                         handleChange={handleChange}
                         handleAddNote={handleAddNotes}
                         btnText={selectedNoteObj?._id ? "Update" : "Add"}
+                        isLoading={updateNoteMutation.isLoading || postNoteMutation.isLoading}
                     />
                 </div>
 
