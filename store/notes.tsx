@@ -71,10 +71,14 @@ export const cloneDeep = (obj: any) => {
     return JSON.parse(JSON.stringify(obj))
 }
 
-export const initialEditorValue: ISlateNote = [{
-    type: 'paragraph',
-    children: [{ text: '' }],
-}];
+export const initialEditorValue: () => ISlateNote = () => {
+    const defaultValue = [{
+        type: 'paragraph',
+        children: [{ text: '' }],
+    }]
+
+    return defaultValue;
+}
 
 
 
@@ -164,7 +168,7 @@ const usePostNoteController = () => {
 
 export const useNotesController = (notes?: INotes[]) => {
 
-    const [note, setNotes] = useState(initialEditorValue);
+    const [note, setNotes] = useState(initialEditorValue());
 
 
     const {
@@ -184,11 +188,16 @@ export const useNotesController = (notes?: INotes[]) => {
     } = usePostNoteController();
 
 
+    function resetSelectedNotesObject() {
+        setNotes(initialEditorValue());
+        setSelectedNodeObj(null);
+    }
+
+
     useEffect(() => {
 
         return () => {
-            setNotes(cloneDeep(initialEditorValue))
-            setSelectedNodeObj(null)
+            resetSelectedNotesObject()
         }
     }, [setSelectedNodeObj])
 
@@ -250,9 +259,9 @@ export const useNotesController = (notes?: INotes[]) => {
     }
 
     const handleNoteDelete = async (selectedNoteObj: INote, cid: string) => {
-
-
         const requestPayload = { data: { cid, nodeId: selectedNoteObj._id } }
+
+
         deleteNoteMutation.mutate(requestPayload)
 
 
@@ -269,6 +278,7 @@ export const useNotesController = (notes?: INotes[]) => {
         handleBtnClick,
         handleNoteEdit,
         handleNoteDelete,
+        resetSelectedNotesObject,
 
         ...connectionState
     };

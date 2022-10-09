@@ -5,7 +5,7 @@ import NoteList from './NoteList'
 import MyNotes from './MyNotes'
 
 import { useNotesController } from '@/store/notes';
-import { INote } from "@/types/note";
+import { IConnectionDetails, INote } from "@/types/note";
 import { useSelectConnectionController } from "@/store/connection";
 
 interface ISectionLayoutProps {
@@ -14,7 +14,7 @@ interface ISectionLayoutProps {
 
 
 const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
-    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete } = useNotesController([])
+    const { setNotes, note, handleBtnClick, handleNoteEdit, handleNoteDelete, resetSelectedNotesObject } = useNotesController([])
 
     const {
         selectConnection,
@@ -22,6 +22,11 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
         connectionList,
         isConnectionListLoading
     } = useSelectConnectionController()
+
+    const handleConnectionChange = (newConnectionObj: IConnectionDetails | null) => {
+        setSelectedConnection(newConnectionObj)
+        resetSelectedNotesObject()
+    }
 
     const handleChange = (newState: any) => {
         setNotes(newState)
@@ -56,7 +61,7 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
             <div className="w-[25%] bg-whiteSmoke h-full pt-3 px-7">
                 <ProfileSection
                     selectConnection={selectConnection}
-                    setSelectedConnection={setSelectedConnection}
+                    setSelectedConnection={handleConnectionChange}
                     connectionList={connectionList}
                     isConnectionListLoading={isConnectionListLoading}
                 />

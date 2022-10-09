@@ -13,7 +13,7 @@ import { IConnectionDetails } from '@/types/note';
 
 interface IProfileSectionProps {
     selectConnection: IConnectionDetails | null
-    setSelectedConnection: Dispatch<SetStateAction<IConnectionDetails | null>>;
+    setSelectedConnection: (arg: IConnectionDetails | null) => void;
     connectionList: {
         data: {
             connections: IConnectionDetails[];
@@ -43,7 +43,7 @@ interface ISectionLayoutProps {
 
 
 export const Content = ({ note, handleSaveNotes, handleChange, isEditMode, username }: any) => {
-    let localNote = note ? note : cloneDeep(initialEditorValue)
+    let localNote = note ? note : initialEditorValue()
 
     return (
         <div className={`w-full  flex-wrap flex-1  px-6 rounded  mt-4 mb-5 ${isEditMode ? 'border-4 bg-white shadow-lg' : ''}`}>
