@@ -27,7 +27,7 @@ export const getNotesList = async (userId: String, cid: String) => {
                         uid: new mongoose.Types.ObjectId(userId as string),
                     },
                     {
-                        "connections.uid": new mongoose.Types.ObjectId(cid as string)
+                        "connections._id": new mongoose.Types.ObjectId(cid as string)
                     },
                 ]
 
@@ -38,32 +38,67 @@ export const getNotesList = async (userId: String, cid: String) => {
         },
 
         {
-            $unwind: "$connections.meetingNotes"
+            $match: {
+                "connections._id": new mongoose.Types.ObjectId(cid as string)
+            }
         },
         {
             $sort: {
                 "connections.meetingNotes.updatedAt": -1
             }
         },
+
         {
-            $group: {
-                _id: "$_id",
-
-
-                uid: { $first: '$uid' },
-                cid: { $first: '$connections._id' },
-                createdAt: { $first: '$createdAt' },
-                updatedAt: { $first: '$updatedAt' },
-                __v: { $first: '$__v' },
-
-
-
-                "notes": {
-                    "$push": "$connections.meetingNotes",
-                }
+            $project: {
+                notes: "$connections.meetingNotes",
+                _id: 0
 
             }
         },
+        // {
+        //     $unwind: "$meetingNotes"
+        // },
+        // {
+        //     $sort: {
+        //         "connections.meetingNotes.updatedAt": -1
+        //     }
+        // },
+
+        // {
+        //     $unwind: "$connections.meetingNotes"
+        // },
+        // {
+        //     $project: {
+        //         meetingNotes: "$connections.meetingNotes",
+        //         _id: 0
+        //     }
+        // },
+        // {
+        //     $sort: {
+        //         "connections.meetingNotes.updatedAt": -1
+        //     }
+        // },
+
+        // {
+        //     $group: {
+        //         _id: "$connections._id",
+
+
+        //         uid: { $first: '$uid' },
+        //         cid: { $first: '$connections._id' },
+        //         name: { $first: '$connections.name' },
+        //         createdAt: { $first: '$createdAt' },
+        //         updatedAt: { $first: '$updatedAt' },
+        //         __v: { $first: '$__v' },
+
+
+
+        //         "notes": {
+        //             "$push": "$connections.meetingNotes",
+        //         }
+
+        //     }
+        // },
 
         // {
         //     $project: {
@@ -76,7 +111,8 @@ export const getNotesList = async (userId: String, cid: String) => {
 
     ])
 
-    return response
+    return response?.[0]
+
 }
 
 
@@ -111,9 +147,9 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const response = await getNotesList(userId, cid)
 
-        Logger.debug("get function note => response saa s", { response: response[0] })
+        Logger.debug("get function note => response saa s", { response: response })
 
-        responseHandler(res, response[0], 200)
+        responseHandler(res, response, 200)
         return
 
 
