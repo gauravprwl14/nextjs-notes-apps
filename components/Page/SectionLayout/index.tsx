@@ -35,13 +35,13 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
             handleBtnClick(localNote, selectConnection._id)
         }
 
-
-
     }
+
     const handleEditBtnClick = (payload: { noteObj: INote }) => {
 
         handleNoteEdit(payload)
     }
+
     const handleDeleteBtnClick = (noteObj: INote) => {
 
         handleNoteDelete(noteObj)
