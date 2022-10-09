@@ -1,51 +1,68 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { FaSort, FaCheck } from 'react-icons/fa';
+import { IConnectionDetails } from '@/types/note';
+
 
 const people = [
-    { id: 1, name: 'Wade Cooper' },
-    { id: 2, name: 'Arlene Mccoy' },
-    { id: 3, name: 'Devon Webb' },
-    { id: 4, name: 'Tom Cook' },
-    { id: 5, name: 'Tanya Fox' },
-    { id: 6, name: 'Hellen Schmidt' },
+    { _id: 1, name: 'Wade Cooper' },
+    { _id: 2, name: 'Arlene Mccoy' },
+    { _id: 3, name: 'Devon Webb' },
+    { _id: 4, name: 'Tom Cook' },
+    { _id: 5, name: 'Tanya Fox' },
+    { _id: 6, name: 'Hellen Schmidt' },
 ]
 
-export default function Example({ data = [] }) {
-    console.log('%c data ', 'background: black; color: yellow', { data });
-    const [selected, setSelected] = useState(data?.[0])
+
+interface ISelectSearchProps {
+    data: IConnectionDetails[] | [] | null
+    selected: IConnectionDetails | null
+    setSelected: (connectionObj: IConnectionDetails) => void
+}
+
+export default function SelectSearch({ data = [], selected, setSelected }: ISelectSearchProps) {
+    // const [selected, setSelected] = useState<IConnectionDetails | null>(data?.[0])
     const [query, setQuery] = useState('')
 
     useEffect(() => {
         if (!selected && data?.length) {
-            setSelected(data[2])
+            setSelected(data[0])
         }
 
-        return () => {
-            setSelected(null)
-        }
+        // TODO
+        // return () => {
+
+        //     setSelected(null)
+        // }
 
     }, [data])
 
 
-    const filteredPeople =
+    const onSelect = (selectedPerson: IConnectionDetails) => {
+        setSelected(selectedPerson)
+    }
+
+
+    let filteredPeople =
         query === ''
             ? data
-            : data.filter((person) =>
+            : data?.filter((person: IConnectionDetails) =>
                 person.name
                     .toLowerCase()
                     .replace(/\s+/g, '')
                     .includes(query.toLowerCase().replace(/\s+/g, ''))
             )
+    filteredPeople = filteredPeople || []
 
     return (
         <div className="w-full flex">
-            <Combobox value={selected} onChange={setSelected}>
+            <Combobox value={selected} onChange={onSelect}>
                 <div className="relative mt-1">
-                    <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                    <div className="relative w-full cursor-default overflow-hidden rounded-lg text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                         <Combobox.Input
-                            className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                            displayValue={(person) => person?.name || "-"}
+                            className="w-full border-none py-2 pl-3 pr-10 leading-5 focus:outline-none text-terraCotta font-Inter font-bold text-lg"
+                            // TODO
+                            displayValue={(person: IConnectionDetails) => (person?.name || "-") as string}
                             onChange={(event) => setQuery(event.target.value)}
                         />
                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -68,9 +85,9 @@ export default function Example({ data = [] }) {
                                     Nothing found.
                                 </div>
                             ) : (
-                                filteredPeople.map((person) => (
+                                filteredPeople.map((person: IConnectionDetails, index) => (
                                     <Combobox.Option
-                                        key={person?._id}
+                                        key={person?._id || index}
                                         className={({ active }) =>
                                             `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-silverChalice text-white' : 'text-gray-900'
                                             }`
