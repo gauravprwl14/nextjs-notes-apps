@@ -60,7 +60,7 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
             {
 
                 "arrayFilters": [{
-                    "cid.uid": cid,
+                    "cid._id": cid,
 
                 }],
 
@@ -70,7 +70,7 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
                 fields: {
                     connections: {
                         $elemMatch: {
-                            "uid": cid,
+                            "_id": cid,
                         },
 
                     }
