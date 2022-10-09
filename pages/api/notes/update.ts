@@ -62,7 +62,7 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
 
                 // "fields": { "_id": 1, "connections": 1 },
                 "arrayFilters": [{
-                    "cid.uid": cid,
+                    "cid._id": cid,
 
                 },
                 {
@@ -75,7 +75,7 @@ const update = async (req: NextApiRequest, res: NextApiResponse) => {
                 fields: {
                     connections: {
                         $elemMatch: {
-                            "uid": cid,
+                            "_id": new mongoose.Types.ObjectId(cid as string),
                         },
 
                     }

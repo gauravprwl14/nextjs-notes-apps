@@ -239,8 +239,8 @@ export const useNotesController = (notes?: INotes[]) => {
         if (selectedNoteObj) {
             // already one note is selected for edit
             // todo show a confirmation modal before proceeding
-            // setSelectedNodeObj(noteObj)
-            // setNotes(noteObj.note)
+            setSelectedNodeObj(noteObj)
+            setNotes(noteObj.note)
         } else {
             setSelectedNodeObj(noteObj)
             setNotes(noteObj.note)
