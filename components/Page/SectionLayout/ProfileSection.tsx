@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { CONNECTION_ID, useConnectionController } from "@/store/connection";
 import SelectSearch from '@/components/SelectSearch'
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,9 +9,17 @@ import { getConnectionDetailsAPICall, getConnectionListAPICall } from "services/
 import Editor from './Editor'
 import { cloneDeep, initialEditorValue } from '@/store/notes';
 import { useSelectConnectionController } from '@/store/connection';
+import { IConnectionDetails } from '@/types/note';
 
-interface Props {
-
+interface IProfileSectionProps {
+    selectConnection: IConnectionDetails | null
+    setSelectedConnection: Dispatch<SetStateAction<IConnectionDetails | null>>;
+    connectionList: {
+        data: {
+            connections: IConnectionDetails[];
+        };
+    } | undefined
+    isConnectionListLoading: boolean
 }
 
 
@@ -52,15 +60,10 @@ export const Content = ({ note, handleSaveNotes, handleChange, isEditMode, usern
 
 
 
-const ProfileSection: FunctionComponent<Props> = ({ }) => {
+const ProfileSection: FunctionComponent<IProfileSectionProps> = ({ selectConnection, setSelectedConnection, connectionList, isConnectionListLoading }) => {
     const queryClient = useQueryClient()
     const { isEditMode, setEditMode, handleConnectionNoteUpdateBtnClick } = useConnectionController()
-    const {
-        selectConnection,
-        setSelectedConnection,
-        connectionList,
-        isConnectionListLoading
-    } = useSelectConnectionController()
+
     const [note, setNotes] = useState()
 
     const handleChange = (newState: any) => {
