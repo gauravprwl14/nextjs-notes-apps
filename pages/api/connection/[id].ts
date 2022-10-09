@@ -14,14 +14,54 @@ const getConnectionDetailsValidator = z.object({
 
 
 export const getConnectionDetails = async (userId: String, cid: String) => {
-    const response = await NotesModel.findOne({
-        uid: new mongoose.Types.ObjectId(userId as string),
-        "connections.uid": new mongoose.Types.ObjectId(cid as string)
-    })
 
-    const transformedConnectionObj = response?.toObject()
+    const response = await NotesModel.aggregate([
+        {
+            $match: {
+                $and: [
+                    {
+                        uid: new mongoose.Types.ObjectId(userId as string),
+                        "connections._id": new mongoose.Types.ObjectId(cid as string)
 
-    const connectionObj = transformedConnectionObj?.connections[0]
+                    }
+                ]
+
+            }
+        },
+        {
+
+            $project: {
+                "connections": {
+                    $filter: {
+                        "input": "$connections",
+                        "as": "obj",
+                        "cond": {
+                            "$eq": [
+                                "$$obj._id",
+                                new mongoose.Types.ObjectId(cid as string)
+
+
+                            ]
+                        },
+                    },
+                }
+
+            }
+        },
+        {
+            $unwind: "$connections"
+        },
+        {
+            $project: {
+                connections: 1, _id: 0
+            }
+        },
+
+    ])
+
+
+    const transformedConnectionObj = response[0]
+    const connectionObj = transformedConnectionObj?.connections || null
     return connectionObj
 
 
