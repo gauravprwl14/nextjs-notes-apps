@@ -1,5 +1,7 @@
 import { GetServerSidePropsContext } from 'next/types';
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getConnectionDetailsAPICall, getConnectionListAPICall } from "services/connection";
 import { getAPIContext, CONSTANTS } from 'utils/helper';
 import { fetcher, HttpMethods } from '../utils/fetcher'
 import { dehydrate, DehydratedState, QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -116,6 +118,39 @@ export const useAddConnectionModal = () => {
 }
 
 
+export const useSelectConnectionController = () => {
+    const [selectConnection, setSelectedConnection] = useState<IConnectionDetails | null>(null)
+
+    let { isLoading: isConnectionListLoading, data: connectionList } = useQuery(['connectionList'], () =>
+        getConnectionListAPICall(),
+
+        {
+            onSuccess: (data: { data: { connections: IConnectionDetails[] } }) => {
+                const { connections } = data?.data
+                if (!selectConnection && connections?.length) {
+                    setSelectedConnection(connections[0])
+                }
+            },
+            onError: () => {
+                // TODO
+            }
+        }
+    );
+
+
+
+    return {
+        selectConnection,
+        setSelectedConnection,
+        connectionList,
+        isConnectionListLoading
+
+
+    }
+
+}
+
+
 
 export const useConnectionController = () => {
 
@@ -128,9 +163,9 @@ export const useConnectionController = () => {
 
 
 
-    const handleConnectionNoteUpdateBtnClick = async (payload: ISlateNote) => {
+    const handleConnectionNoteUpdateBtnClick = async (payload: ISlateNote, cid: String) => {
 
-        const requestPayload = { data: { note: payload, cid: CONNECTION_ID } }
+        const requestPayload = { data: { note: payload, cid } }
         updateConnectionNoteMutation.mutate(requestPayload)
 
     }
