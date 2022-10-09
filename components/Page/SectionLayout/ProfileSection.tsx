@@ -26,13 +26,14 @@ interface IProfileSectionProps {
 const ProfileIcon = () => {
 
     return (
-        // <div className='w-11 flex rounded-full'>
-        //     <Image
-        //         width={"44px"}
-        //         height={"44px"}
-        //         layout="responsive" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
-        // </div>
-        <img className="w-11 h-11 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+        <div className='w-11 h-11 flex rounded-full'>
+            <Image
+                width={"44px"}
+                height={"44px"}
+                className='rounded-full'
+                src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+        </div>
+        // <img className="w-11 h-11 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
     )
 }
 
@@ -110,7 +111,7 @@ const ProfileSection: FunctionComponent<IProfileSectionProps> = ({ selectConnect
             <div className="flex mt-3 flex-row justify-between items-center">
                 <div className=" flex flex-row justify-center items-center">
                     <ProfileIcon />
-                    <div className=" ml-4 ">
+                    <div className=" px-4 ">
                         <SelectSearch
                             data={connectionList?.data?.connections || []}
                             selected={selectConnection}
