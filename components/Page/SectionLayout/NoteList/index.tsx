@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { CONNECTION_ID } from "@/store/notes";
-import { INote, INoteEditFnHandler } from "@/types/note";
+import { IConnectionDetails, INote, INoteEditFnHandler } from "@/types/note";
 import { useQuery } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil, } from 'react-icons/bi';
@@ -13,6 +13,7 @@ import { Menu, Transition } from '@headlessui/react'
 interface INoteListProps {
     onEditBtnClick: (payload: { noteObj: INote }) => void
     onDeleteClick: (noteObj: INote) => void
+    cObj: IConnectionDetails | null
 }
 
 
@@ -149,10 +150,14 @@ const NoteCard = ({ note, onEdit, onDelete }: {
 
 
 
-const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDeleteClick }) => {
+const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDeleteClick, cObj }) => {
 
-    let { isLoading, data } = useQuery(['notes'], () =>
-        getNotesListAPICall(CONNECTION_ID)
+    let { isLoading, data } = useQuery(['notes', cObj?._id], () => {
+        return getNotesListAPICall(cObj?._id || '')
+    },
+        {
+            enabled: cObj?._id ? true : false
+        }
     );
 
     let notes = data?.data?.notes
@@ -174,7 +179,6 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
         onDeleteClick(noteObj)
     }
 
-    console.log('%c notes asdasda', 'background: lime; color: black', { notes });
 
 
     return (
@@ -188,16 +192,27 @@ const NotesList: FunctionComponent<INoteListProps> = ({ onEditBtnClick, onDelete
             <div>
                 <SearchBar />
             </div>
+
             {
-                notes?.map((note: INote, index: number) => {
-                    return (
-
-                        <NoteCard note={note} key={`${index}_${note._id}`} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />
+                notes && notes.length === 0 ?
 
 
-                    )
-                })
+                    <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                        Nothing found.
+                    </div>
+
+                    :
+
+                    notes?.map((note: INote, index: number) => {
+                        return (
+
+                            <NoteCard note={note} key={`${index}_${note._id}`} onEdit={handleEditBtnClick} onDelete={handleDeleteBtnClick} />
+
+
+                        )
+                    })
             }
+
         </div>
     )
 }
