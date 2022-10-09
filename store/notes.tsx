@@ -249,10 +249,10 @@ export const useNotesController = (notes?: INotes[]) => {
 
     }
 
-    const handleNoteDelete = async (selectedNoteObj: INote) => {
+    const handleNoteDelete = async (selectedNoteObj: INote, cid: string) => {
 
 
-        const requestPayload = { data: { cid: CONNECTION_ID, nodeId: selectedNoteObj._id } }
+        const requestPayload = { data: { cid, nodeId: selectedNoteObj._id } }
         deleteNoteMutation.mutate(requestPayload)
 
 

@@ -65,7 +65,7 @@ const deleteNote = async (req: NextApiRequest, res: NextApiResponse) => {
                 new: true,
                 runValidators: true,
                 "arrayFilters": [{
-                    "cid.uid": cid,
+                    "cid._id": cid,
 
                 },
                 ],
@@ -73,7 +73,7 @@ const deleteNote = async (req: NextApiRequest, res: NextApiResponse) => {
                 fields: {
                     connections: {
                         $elemMatch: {
-                            "uid": cid,
+                            "_id": new mongoose.Types.ObjectId(cid as string)
                         },
 
                     }

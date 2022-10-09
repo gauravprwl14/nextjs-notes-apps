@@ -44,7 +44,10 @@ const SectionLayout: FunctionComponent<ISectionLayoutProps> = ({ }) => {
 
     const handleDeleteBtnClick = (noteObj: INote) => {
 
-        handleNoteDelete(noteObj)
+        // todo handle the error condition,show a toast msg or disable the btn if connection obj is not present
+        if (selectConnection?._id) {
+            handleNoteDelete(noteObj, selectConnection._id)
+        }
     }
 
     return (
