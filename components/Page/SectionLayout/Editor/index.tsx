@@ -73,9 +73,6 @@ const RichTextEditor = ({ note, handleChange, handleAddNote, btnText = 'Add', is
     }
 
 
-
-    console.log('%c notes array inside the editor ', 'background: lime; color: black', { note });
-
     return (
         <Slate editor={editor} value={noteValue} onChange={handleStateChange}>
             {

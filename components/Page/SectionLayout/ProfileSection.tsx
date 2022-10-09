@@ -1,12 +1,14 @@
+import Image from 'next/image'
 import { useEffect } from 'react'
 import { CONNECTION_ID, useConnectionController } from "@/store/connection";
 import SelectSearch from '@/components/SelectSearch'
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FunctionComponent, useState } from "react";
 import { BiPencil } from 'react-icons/bi';
 import { getConnectionDetailsAPICall, getConnectionListAPICall } from "services/connection";
 import Editor from './Editor'
 import { cloneDeep, initialEditorValue } from '@/store/notes';
+import { useSelectConnectionController } from '@/store/connection';
 
 interface Props {
 
@@ -15,7 +17,15 @@ interface Props {
 
 const ProfileIcon = () => {
 
-    return <img className=" w-11 h-11 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+    return (
+        // <div className='w-11 flex rounded-full'>
+        //     <Image
+        //         width={"44px"}
+        //         height={"44px"}
+        //         layout="responsive" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+        // </div>
+        <img className="w-11 h-11 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+    )
 }
 
 
@@ -24,7 +34,7 @@ interface ISectionLayoutProps {
 }
 
 
-export const Content = ({ note, handleSaveNotes, handleChange, isEditMode }: any) => {
+export const Content = ({ note, handleSaveNotes, handleChange, isEditMode, username }: any) => {
     let localNote = note ? note : cloneDeep(initialEditorValue)
 
     return (
@@ -43,24 +53,43 @@ export const Content = ({ note, handleSaveNotes, handleChange, isEditMode }: any
 
 
 const ProfileSection: FunctionComponent<Props> = ({ }) => {
+    const queryClient = useQueryClient()
     const { isEditMode, setEditMode, handleConnectionNoteUpdateBtnClick } = useConnectionController()
+    const {
+        selectConnection,
+        setSelectedConnection,
+        connectionList,
+        isConnectionListLoading
+    } = useSelectConnectionController()
     const [note, setNotes] = useState()
 
     const handleChange = (newState: any) => {
         setNotes(newState)
     }
+    const onChangingConnectionObj = (newState: any) => {
+        setSelectedConnection(newState)
+        queryClient.fetchQuery
+    }
 
-    let { isLoading, data } = useQuery(['connectionDetails'], () =>
-        getConnectionDetailsAPICall(CONNECTION_ID)
+    console.log('%c 5555 selectConnection ', 'background: lime; color: black', { selectConnection });
+
+    let { isLoading, data } = useQuery(['connectionDetails', selectConnection?._id], () => {
+        const cid = selectConnection?._id
+        if (cid) {
+            return getConnectionDetailsAPICall(cid)
+        }
+    },
+        {
+            enabled: selectConnection?._id ? true : false
+        }
+
+
     );
 
-    let { isLoading: isConnectionListLoading, data: connectionList } = useQuery(['connectionList'], () =>
-        getConnectionListAPICall()
-    );
+
 
     useEffect(() => {
         let note = data?.data?.personnelNote?.note
-        console.log('%c note inside the profile section', 'background: black; color: yellow', { note, data });
         setNotes(note)
 
     }, [data]
@@ -68,7 +97,9 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
 
 
     const handleSaveNotes = (localNote: any) => {
-        handleConnectionNoteUpdateBtnClick(localNote)
+        // TODO add a check if selected connection obj is present or not
+        // TODO also disable the edit/save btn selectConnection ===null
+        handleConnectionNoteUpdateBtnClick(localNote, selectConnection?._id || '')
     }
 
     return (
@@ -77,9 +108,10 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
                 <div className=" flex flex-row justify-center items-center">
                     <ProfileIcon />
                     <div className=" ml-4 ">
-                        <span className="text-terraCotta font-Inter font-bold text-lg"> John  Smith </span>
                         <SelectSearch
-                            data={connectionList?.data?.connections}
+                            data={connectionList?.data?.connections || []}
+                            selected={selectConnection}
+                            setSelected={onChangingConnectionObj}
                         />
                     </div>
                 </div>
@@ -98,6 +130,7 @@ const ProfileSection: FunctionComponent<Props> = ({ }) => {
                 handleSaveNotes={handleSaveNotes}
                 handleChange={handleChange}
                 isEditMode={isEditMode}
+                username={data?.data?.name}
             />
         </div>
     )
