@@ -30,8 +30,8 @@ export const AppErrorFallback = ({ error, errorInfo, resetErrorBoundary }: AEFPr
                 <p>
                     If the error keeps occurring, please file a bug report with the following details, and include any steps to reproduce the issue:
                 </p>
-
-                <Button onClick={resetErrorBoundary}>Reload the Page</Button>
+                {/* TODO to enable the reload page*/}
+                {/* <Button onClick={resetErrorBoundary}>Reload the Page</Button> */}
 
                 <h3>Error Details</h3>
                 <h5>Message</h5>
