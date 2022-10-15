@@ -76,7 +76,7 @@ const RichTextEditor = ({ note, handleChange, handleAddNote, isLoading = false, 
     return (
         <Slate editor={editor} value={noteValue} onChange={handleStateChange}>
             {
-                isEditModeEnable && <div className='flex flex-1'>
+                isEditModeEnable && <div className='flex flex-1 overflow-auto'>
                     <div className='flex-1'>
                         <Toolbar>
                             <MarkButton format="bold" icon={<FaBold />} />
