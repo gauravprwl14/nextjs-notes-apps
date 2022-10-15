@@ -17,7 +17,7 @@ export { getServerSideProps } from "@/store/notes";
 
 const AddUserButton = ({ onBtnClick }: { onBtnClick: () => void }) => {
     return (
-        <div className="fixed bg-terraCotta rounded-full bottom-3 right-3 p-2 justify-center align-middle flex"
+        <div className="fixed w-14 h-14 bg-terraCotta rounded-full bottom-3 right-3 p-2 justify-center align-middle flex"
             onClick={onBtnClick}
         >
             <button className="w-full p-2">
