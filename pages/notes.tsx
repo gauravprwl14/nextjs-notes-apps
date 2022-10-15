@@ -29,9 +29,6 @@ const AddUserButton = ({ onBtnClick }: { onBtnClick: () => void }) => {
 
 
 const AddUserModal = ({ isOpen, closeModal, openModal, title, updateConnectionDetails, isLoading, onAddNewConnectionClick }: any) => {
-
-
-
     return (
         <Modal
             isOpen={isOpen}

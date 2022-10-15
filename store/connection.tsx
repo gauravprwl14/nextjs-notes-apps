@@ -126,7 +126,8 @@ export const useSelectConnectionController = () => {
 
         {
             onSuccess: (data: { data: { connections: IConnectionDetails[] } }) => {
-                const { connections } = data?.data
+                const connections = data?.data?.connections || []
+                // const { connections } = data?.data
                 if (!selectConnection && connections?.length) {
                     setSelectedConnection(connections[0])
                 }

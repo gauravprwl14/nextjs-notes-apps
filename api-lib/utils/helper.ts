@@ -6,6 +6,10 @@ export const serializeNote = (nodesArr: Element[]) => {
 
 
 export const generateResponseForPostNoteApi = (response: any) => {
+    if (!response) {
+        // TODO throw an error 
+        return []
+    }
     const { _doc } = response
 
     const connectionObject = _doc.connections[0]

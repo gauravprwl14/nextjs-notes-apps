@@ -35,7 +35,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { db, token, error, isError } = await authInitializer(req, res);
         if (isError) {
-            responseHandler(res, error?.payload || "", error?.status || 500)
+            return responseHandler(res, error?.payload || "", error?.status || 500)
         }
 
         const userId = token?.uid as string
@@ -45,7 +45,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const response = await getUsersDetails(userId)
 
-        Logger.debug("get getUsersDetails => response saa s", { response: response[0] })
+        Logger.debug("get getUsersDetails => response saa s", { response: response })
 
         responseHandler(res, response, 200)
         return
