@@ -59,7 +59,6 @@ const MyNotes: FunctionComponent<Props> = ({ }) => {
 
     useEffect(() => {
         let note = data?.data?.personnelNote?.note
-        console.log('%c note inside the user profile section', 'background: black; color: yellow', { note, data });
         setNotes(note)
 
     }, [data]

@@ -32,7 +32,7 @@ export const Input = ({
             <label className="flex flex-col label">
                 {label}
                 <input
-                    className={`input placeholder:base ${className}`}
+                    className={`input placeholder:base focus:outline-none ${className}`}
                     type={type}
                     placeholder={placeholder}
                     defaultValue={defaultValue}
